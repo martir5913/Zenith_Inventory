@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="CapaComun/CapaComun.csproj" Id="b0a7c98b-c7ef-4e38-90b5-9eda243afde1" />
+  <Project Path="CapaDatos/CapaDatos.csproj" Id="f1b7bd76-cb12-4f04-8a67-e421ce18bd5e" />
+  <Project Path="CapaEntidad/CapaEntidad.csproj" Id="7af6ed74-b324-4078-9f81-1743dd29ea52" />
+  <Project Path="CapaNegocio/CapaNegocio.csproj" Id="10a83ccd-b85a-4aa6-b938-8238a37915c1" />
+  <Project Path="Zenith_Inventory.Tests/Zenith_Inventory.Tests.csproj" Id="6d7d4086-fc9e-4228-b256-0337e2d46ebb" />
+  <Project Path="Zenith_Inventory/Zenith_Inventory.csproj" Id="0c789d33-9e42-4bfa-adff-9d1b30d66176" />
+</Solution>
