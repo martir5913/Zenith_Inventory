@@ -10,21 +10,27 @@ namespace Zenith_Inventory.Controllers
     {
         public ActionResult Index()
         {
+            if (!EstaAutenticado())
+            {
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Login()
         {
-            ViewBag.Message = "Your application description page.";
-
+            if (EstaAutenticado())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
-        public ActionResult Contact()
+        private bool EstaAutenticado()
         {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return Session["IsAuthenticated"] != null &&
+                   (bool)Session["IsAuthenticated"] &&
+                   Session["UserId"] != null;
         }
     }
 }

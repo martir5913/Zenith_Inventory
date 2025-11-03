@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CE_Configuracion.cs" />
+    <Compile Include="CE_Permiso.cs" />
+    <Compile Include="CE_Rol.cs" />
+    <Compile Include="DTOs\CE_EncryptionConfig.cs" />
+    <Compile Include="DTOs\CE_LoginRequest.cs" />
+    <Compile Include="DTOs\CE_LoginResponse.cs" />
+    <Compile Include="CE_Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

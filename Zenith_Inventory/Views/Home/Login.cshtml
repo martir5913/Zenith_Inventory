@@ -1,0 +1,82 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Zenith</title>
+    <link rel="stylesheet" href="~/Content/css/login.css">
+    <link rel="icon" type="image/x-icon" href="~/Content/img/favicon.ico">
+</head>
+<body>
+    <div class="wrapper">
+        <form action="@Url.Action("Login", "Account")" id="frmLogin" method="post">
+            @Html.AntiForgeryToken()
+            <div class="login-logo">
+                <p class="logo-text">Zenith</p>
+                <p class="logo-subtitle">Inventory</p>
+            </div>
+
+            <h2>Login</h2>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="message error-message">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="message success-message">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="message info-message">
+                    @TempData["InfoMessage"]
+                </div>
+            }
+
+            <div class="input-field">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <input type="text" id="txtUser" name="username" value="@TempData["Username"]" required>
+                <label>Usuario</label>
+            </div>
+            <div class="input-field">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <circle cx="12" cy="16" r="1"></circle>
+                    <path d="m9 11 3-3 3 3"></path>
+                </svg>
+                <input type="password" id="password" name="password" required>
+                <label>Contraseña</label>
+                <button type="button" class="toggle-password" id="togglePassword">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="12" cy="12" r="3" stroke="#fff" stroke-width="2" />
+                    </svg>
+                </button>
+            </div>
+            <div class="forget">
+                <label for="remember">
+                    <input type="checkbox" id="remember" name="rememberMe">
+                    <p>Recuerdame</p>
+                </label>
+                <a href="#">Restablecer?</a>
+            </div>
+            <button type="submit" id="btnIngresar">Ingresar</button>
+        </form>
+    </div>
+
+    <script src="~/Scripts/login.js"></script>
+</body>
+</html>
