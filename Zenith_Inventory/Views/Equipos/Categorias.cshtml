@@ -1,0 +1,520 @@
+@model CapaEntidad.DTOs.Common.CE_PagedResult<CapaEntidad.DTOs.Categoria.CE_CategoriaListDTO>
+
+@{
+    ViewBag.Title = "Gestión de Categorías";
+}
+
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2">Gestión de Categorías</h1>
+                <p class="text-muted mb-0">Administra las categorías de equipos del inventario</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" id="btnNuevaCategoria">
+                    <i class="bi bi-plus-circle"></i> Nueva Categoría
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="get" action="@Url.Action("Categorias", "Equipos")" id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control border-start-0"
+                                       name="search"
+                                       id="searchInput"
+                                       placeholder="Buscar por nombre o descripción..."
+                                       value="@ViewBag.SearchTerm">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-fill">
+                                    <i class="bi bi-search"></i> Buscar
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnLimpiar">
+                                    <i class="bi bi-x-circle"></i> Limpiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-tag"></i> Categorías Registradas
+                        @if (Model != null && Model.TotalRecords > 0)
+                        {
+                            <span class="badge bg-primary rounded-pill ms-2">@Model.TotalRecords</span>
+                        }
+                    </h5>
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                    {
+                        <span class="text-muted">
+                            <i class="bi bi-filter"></i> Filtrando por: <strong>@ViewBag.SearchTerm</strong>
+                        </span>
+                    }
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @if (Model != null && Model.Items != null && Model.Items.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">ID</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th class="text-center">Subcategorías</th>
+                                    <th class="text-center">Estado</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var categoria in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="badge bg-light text-dark">#@categoria.IdCategoria</span>
+                                        </td>
+                                        <td>
+                                            <strong>@categoria.Nombre</strong>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">
+                                                @(string.IsNullOrEmpty(categoria.Descripcion) ? "-" : categoria.Descripcion)
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info rounded-pill">
+                                                @categoria.TotalSubcategorias
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            @if (categoria.Activo)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle"></i> Activo
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    <i class="bi bi-x-circle"></i> Inactivo
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button"
+                                                        class="btn btn-outline-primary btn-ver-categoria"
+                                                        data-id="@categoria.IdCategoria"
+                                                        title="Ver detalles">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-outline-warning btn-editar-categoria"
+                                                        data-id="@categoria.IdCategoria"
+                                                        title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-outline-danger btn-eliminar-categoria"
+                                                        data-id="@categoria.IdCategoria"
+                                                        data-nombre="@categoria.Nombre"
+                                                        title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    if (Model.TotalPages > 1)
+                    {
+                        <div class="card-footer bg-white border-top">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">
+                                        Mostrando
+                                        <strong>@((Model.PageNumber - 1) * Model.PageSize + 1)</strong>
+                                        a
+                                        <strong>@Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords)</strong>
+                                        de
+                                        <strong>@Model.TotalRecords</strong>
+                                        resultados
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <nav aria-label="Navegación de páginas">
+                                        <ul class="pagination justify-content-end mb-0">
+                                            <!-- Primera página -->
+                                            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                                                <a class="page-link" href="@Url.Action("Categorias", new { page = 1, search = ViewBag.SearchTerm })">
+                                                    <i class="bi bi-chevron-double-left"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Página anterior -->
+                                            <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                                                <a class="page-link" href="@Url.Action("Categorias", new { page = Model.PageNumber - 1, search = ViewBag.SearchTerm })">
+                                                    <i class="bi bi-chevron-left"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Páginas numeradas -->
+                                            @{
+                                                int startPage = Math.Max(1, Model.PageNumber - 2);
+                                                int endPage = Math.Min(Model.TotalPages, Model.PageNumber + 2);
+                                            }
+
+                                            @for (int i = startPage; i <= endPage; i++)
+                                            {
+                                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                                    <a class="page-link" href="@Url.Action("Categorias", new { page = i, search = ViewBag.SearchTerm })">
+                                                        @i
+                                                    </a>
+                                                </li>
+                                            }
+
+                                            <!-- Página siguiente -->
+                                            <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                                                <a class="page-link" href="@Url.Action("Categorias", new { page = Model.PageNumber + 1, search = ViewBag.SearchTerm })">
+                                                    <i class="bi bi-chevron-right"></i>
+                                                </a>
+                                            </li>
+
+                                            <!-- Última página -->
+                                            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                                                <a class="page-link" href="@Url.Action("Categorias", new { page = Model.TotalPages, search = ViewBag.SearchTerm })">
+                                                    <i class="bi bi-chevron-double-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                        </div>
+                        <h5 class="text-muted">No se encontraron categorías</h5>
+                        <p class="text-muted mb-3">
+                            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                            {
+                                <span>No hay resultados para la búsqueda: <strong>@ViewBag.SearchTerm</strong></span>
+                            }
+                            else
+                            {
+                                <span>Comienza agregando tu primera categoría</span>
+                            }
+                        </p>
+                        <button class="btn btn-primary" id="btnNuevaCategoriaEmpty">
+                            <i class="bi bi-plus-circle"></i> Crear Primera Categoría
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Message -->
+@if (!string.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Error:</strong> @ViewBag.Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Modal para Nueva/Editar Categoría -->
+<div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCategoriaLabel">
+                    <i class="bi bi-tag"></i> <span id="modalTitulo">Nueva Categoría</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCategoria">
+                    <input type="hidden" id="categoriaId" name="IdCategoria">
+
+                    <div class="mb-3">
+                        <label for="categoriaNombre" class="form-label">
+                            Nombre <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="categoriaNombre"
+                               name="Nombre"
+                               placeholder="Ej: Computadoras, Redes, Impresoras"
+                               required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese el nombre de la categoría
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="categoriaDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control"
+                                  id="categoriaDescripcion"
+                                  name="Descripcion"
+                                  rows="3"
+                                  placeholder="Descripción de la categoría (opcional)"></textarea>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="categoriaActivo"
+                               name="Activo"
+                               checked>
+                        <label class="form-check-label" for="categoriaActivo">
+                            Categoría Activa
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarCategoria">
+                    <i class="bi bi-check-circle"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Detalles -->
+<div class="modal fade" id="modalDetalleCategoria" tabindex="-1" aria-labelledby="modalDetalleCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalleCategoriaLabel">
+                    <i class="bi bi-info-circle"></i> Detalles de la Categoría
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalleCategoria">
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 102, 204, 0.05);
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pagination .page-link {
+            color: #0066cc;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #0066cc;
+            border-color: #0066cc;
+        }
+
+        .badge {
+            font-weight: 500;
+        }
+
+        .input-group-text {
+            border-right: 0;
+        }
+
+        .form-control:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            // Abrir modal para nueva categoría
+            $('#btnNuevaCategoria, #btnNuevaCategoriaEmpty').click(function() {
+$('#modalTitulo').text('Nueva Categoría');
+        $('#formCategoria')[0].reset();
+     $('#categoriaId').val('');
+     $('#categoriaActivo').prop('checked', true);
+                $('#modalCategoria').modal('show');
+   });
+
+   // Limpiar búsqueda
+            $('#btnLimpiar').click(function() {
+           $('#searchInput').val('');
+            $('#searchForm').submit();
+       });
+
+   // Ver detalles de categoría
+        $('.btn-ver-categoria').click(function() {
+         var categoriaId = $(this).data('id');
+     $('#detalleCategoria').html('<p class="text-center"><i class="bi bi-hourglass-split"></i> Cargando detalles...</p>');
+ $('#modalDetalleCategoria').modal('show');
+
+       // Llamada AJAX para obtener detalles
+         $.ajax({
+         url: '@Url.Action("GetCategoriaDetalle", "Equipos")',
+              type: 'GET',
+        data: { id: categoriaId },
+      success: function(response) {
+  if (response.success) {
+        var data = response.data;
+      $('#detalleCategoria').html(
+          '<div class="row">' +
+       '<div class="col-12 mb-3"><strong>ID:</strong> ' + data.id + '</div>' +
+             '<div class="col-12 mb-3"><strong>Nombre:</strong> ' + data.nombre + '</div>' +
+ '<div class="col-12 mb-3"><strong>Descripción:</strong> ' + (data.descripcion || '-') + '</div>' +
+   '<div class="col-12 mb-3"><strong>Estado:</strong> ' +
+           (data.activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Inactivo</span>') +
+    '</div>' +
+           '<div class="col-12 mb-3"><strong>Total Subcategorías:</strong> ' + data.totalSubcategorias + '</div>' +
+         '</div>'
+     );
+          }
+   },
+         error: function() {
+              $('#detalleCategoria').html('<p class="text-danger">Error al cargar los detalles</p>');
+      }
+          });
+   });
+
+       // Editar categoría
+            $('.btn-editar-categoria').click(function() {
+      var categoriaId = $(this).data('id');
+     $('#modalTitulo').text('Editar Categoría');
+    $('#categoriaId').val(categoriaId);
+
+                // TODO: Cargar datos de la categoría desde el servidor
+                $('#modalCategoria').modal('show');
+            });
+
+            // Eliminar categoría
+            $('.btn-eliminar-categoria').click(function() {
+      var categoriaId = $(this).data('id');
+             var categoriaNombre = $(this).data('nombre');
+
+    if (confirm('¿Está seguro que desea eliminar la categoría "' + categoriaNombre + '"?\n\nEsta acción no se puede deshacer.')) {
+   $.ajax({
+   url: '@Url.Action("DeleteCategoria", "Equipos")',
+   type: 'POST',
+         data: { id: categoriaId },
+         success: function(response) {
+                if (response.success) {
+     alert(response.message);
+  location.reload();
+ } else {
+          alert('Error: ' + response.message);
+        }
+            },
+   error: function() {
+           alert('Error al eliminar la categoría');
+       }
+    });
+   }
+   });
+
+       // Guardar categoría
+   $('#btnGuardarCategoria').click(function() {
+    var form = $('#formCategoria')[0];
+
+                if (form.checkValidity()) {
+       var categoriaId = $('#categoriaId').val();
+        var url = categoriaId ? '@Url.Action("UpdateCategoria", "Equipos")' : '@Url.Action("CreateCategoria", "Equipos")';
+
+       var formData = {
+            id: categoriaId,
+        nombre: $('#categoriaNombre').val(),
+           descripcion: $('#categoriaDescripcion').val(),
+  activo: $('#categoriaActivo').is(':checked')
+      };
+
+           $.ajax({
+         url: url,
+         type: 'POST',
+        data: formData,
+  success: function(response) {
+          if (response.success) {
+       alert(response.message);
+               $('#modalCategoria').modal('hide');
+            location.reload();
+ } else {
+           alert('Error: ' + response.message);
+          }
+             },
+ error: function() {
+    alert('Error al guardar la categoría');
+     }
+         });
+     } else {
+form.classList.add('was-validated');
+         }
+    });
+
+            // Permitir búsqueda con Enter
+$('#searchInput').keypress(function(e) {
+      if (e.which == 13) {
+    $('#searchForm').submit();
+         return false;
+                }
+            });
+        });
+    </script>
+}

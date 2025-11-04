@@ -3,14 +3,12 @@ using CapaEntidad;
 using CapaEntidad.DTOs;
 using CapaNegocio;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using Zenith_Inventory.Filters;
 
 namespace Zenith_Inventory.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly CN_Autenticacion _cnAutenticacion;
         private readonly CN_Usuario _cnUsuario;
@@ -22,6 +20,7 @@ namespace Zenith_Inventory.Controllers
         }
 
         // GET: Account/Login
+        [AllowAnonymous]
         public ActionResult Login()
         {
             // Si ya está autenticado, redirigir al dashboard
@@ -36,6 +35,7 @@ namespace Zenith_Inventory.Controllers
 
         // POST: Account/Login
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(string username, string password, bool rememberMe = false)
         {
@@ -91,6 +91,7 @@ namespace Zenith_Inventory.Controllers
         }
 
         // GET: Account/Logout
+        [AuthenticationFilter]
         public ActionResult Logout()
         {
             try
@@ -111,46 +112,44 @@ namespace Zenith_Inventory.Controllers
         }
 
         // GET: Account/ChangePassword
+        [AuthenticationFilter]
         public ActionResult ChangePassword()
         {
-            if (!EstaAutenticado())
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            return View();
+            return ViewOrPartial(); // Soporte SPA
         }
 
         // POST: Account/ChangePassword
         [HttpPost]
+        [AuthenticationFilter]
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(string newPassword, string confirmPassword)
         {
             try
             {
-                if (!EstaAutenticado())
-                {
-                    return RedirectToAction("Login", "Home");
-                }
                 if (string.IsNullOrWhiteSpace(newPassword) || string.IsNullOrWhiteSpace(confirmPassword))
                 {
                     TempData["ErrorMessage"] = "Ambos campos son requeridos";
-                    return View();
+                    return ViewOrPartial(); // Soporte SPA
                 }
+
                 if (newPassword != confirmPassword)
                 {
                     TempData["ErrorMessage"] = "Las contraseñas no coinciden";
-                    return View();
+                    return ViewOrPartial(); // Soporte SPA
                 }
+
                 // Validar fortaleza de contraseña
                 var validacion = _cnUsuario.ValidarFortalezaPassword(newPassword);
                 if (!validacion.EsValida)
                 {
                     TempData["ErrorMessage"] = validacion.Mensaje;
-                    return View();
+                    return ViewOrPartial(); // Soporte SPA
                 }
+
                 // Cambiar contraseña
                 string encryptedPassword = _cnAutenticacion.EncriptarPassword(newPassword);
                 var result = _cnUsuario.CambiarPassword(ObtenerUserIdSesion(), encryptedPassword, ObtenerUsernameSesion());
+
                 if (result.Resultado == "EXITO")
                 {
                     TempData["SuccessMessage"] = "Contraseña cambiada exitosamente";
@@ -159,14 +158,14 @@ namespace Zenith_Inventory.Controllers
                 else
                 {
                     TempData["ErrorMessage"] = result.Mensaje;
-                    return View();
+                    return ViewOrPartial(); // Soporte SPA
                 }
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Error interno del sistema";
                 ErrorLogger.Log(ex, "Error en cambio de contraseña");
-                return View();
+                return ViewOrPartial(); // Soporte SPA
             }
         }
 
@@ -203,73 +202,6 @@ namespace Zenith_Inventory.Controllers
             }
         }
 
-        /// <summary>
-        /// Verifica si el usuario está autenticado
-        /// </summary>
-        /// <returns>True si está autenticado, False en caso contrario</returns>
-        private bool EstaAutenticado()
-        {
-            return Session["IsAuthenticated"] != null &&
-                   (bool)Session["IsAuthenticated"] &&
-                   Session["UserId"] != null;
-        }
-
-        /// <summary>
-        /// Obtiene el ID del usuario de la sesión
-        /// </summary>
-        /// <returns>ID del usuario</returns>
-        private int ObtenerUserIdSesion()
-        {
-            if (Session["UserId"] != null)
-            {
-                return (int)Session["UserId"];
-            }
-            return 0;
-        }
-        private string ObtenerUsernameSesion()
-        {
-            return Session["Username"]?.ToString() ?? string.Empty;
-        }
-        private CE_Usuario ObtenerUsuarioSesion()
-        {
-            return Session["CurrentUser"] as CE_Usuario;
-        }
-
-        #region Métodos de Autorización
-
-        protected bool TienePermiso(string modulo, string accion)
-        {
-            try
-            {
-                CE_Usuario usuario = ObtenerUsuarioSesion();
-                return _cnAutenticacion.UsuarioTienePermiso(usuario, modulo, accion);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Verifica si el usuario actual tiene un rol específico
-        /// </summary>
-        /// <param name="nombreRol">Nombre del rol</param>
-        /// <returns>True si tiene el rol, False en caso contrario</returns>
-        protected bool TieneRol(string nombreRol)
-        {
-            try
-            {
-                CE_Usuario usuario = ObtenerUsuarioSesion();
-                return _cnAutenticacion.UsuarioTieneRol(usuario, nombreRol);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Métodos de Desarrollo (Remover en Producción)
 
         /// <summary>
@@ -277,6 +209,7 @@ namespace Zenith_Inventory.Controllers
         /// NOTA: Remover en producción
         /// </summary>
         /// <returns>Resultado de la configuración</returns>
+        [AllowAnonymous]
         public ActionResult ConfigurarSistemaInicial()
         {
             try
@@ -285,13 +218,13 @@ namespace Zenith_Inventory.Controllers
                 ViewBag.Reporte = reporte;
                 ViewBag.Title = "Configuración Inicial del Sistema";
 
-                return View();
+                return ViewOrPartial(); // Soporte SPA
             }
             catch (Exception ex)
             {
                 ViewBag.Error = $"Error en configuración inicial: {ex.Message}";
                 ViewBag.Title = "Error en Configuración";
-                return View();
+                return ViewOrPartial(); // Soporte SPA
             }
         }
 
@@ -301,6 +234,7 @@ namespace Zenith_Inventory.Controllers
         /// </summary>
         /// <returns>Resultado JSON</returns>
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult ActualizarPasswordAdmin()
         {
             try
@@ -328,6 +262,7 @@ namespace Zenith_Inventory.Controllers
 
         // Método para limpiar sesión desde AJAX
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult LogoutAjax()
         {
             try
@@ -343,6 +278,7 @@ namespace Zenith_Inventory.Controllers
 
         // Método para verificar estado de sesión desde AJAX
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult VerificarSesion()
         {
             try

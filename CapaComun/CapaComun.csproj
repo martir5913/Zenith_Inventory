@@ -46,6 +46,9 @@
     <Compile Include="CC_Conexion.cs" />
     <Compile Include="CC_ContextoWeb.cs" />
     <Compile Include="CC_Encriptacion.cs" />
+    <Compile Include="Excepciones\BusinessLogicException.cs" />
+    <Compile Include="Excepciones\DataAccessException.cs" />
+    <Compile Include="Excepciones\ValidationException.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

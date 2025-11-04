@@ -89,33 +89,139 @@ overlay.remove();
     }
 
     // ========================================
-    // SET ACTIVE NAV LINK
+    // SET ACTIVE NAV LINK - IMPROVED VERSION
     // ========================================
-    function setActiveNavLink() {
-     const currentPath = window.location.pathname;
-        
-        navLinks.forEach(link => {
-         const linkPath = link.getAttribute('href');
-    
-       // Remove active class from all
-   link.classList.remove('active');
-            
-            // Add active class to current page
-       if (linkPath && currentPath.includes(linkPath) && linkPath !== '#') {
-       link.classList.add('active');
-      
-   // If it's a submenu item, expand parent
-    const submenu = link.closest('.submenu');
-           if (submenu) {
-   submenu.classList.add('show');
-         const parentLink = submenu.previousElementSibling;
-          if (parentLink) {
-           parentLink.classList.add('active');
-      parentLink.setAttribute('aria-expanded', 'true');
-     }
-    }
+  function setActiveNavLink() {
+  // Try to get context from server first (most reliable)
+        let currentController = 'Home';
+   let currentAction = 'Index';
+
+        if (window.zenithContext) {
+  currentController = window.zenithContext.controller || 'Home';
+   currentAction = window.zenithContext.action || 'Index';
+        } else {
+      // Fallback to URL parsing
+       const pathParts = window.location.pathname.split('/').filter(p => p);
+       currentController = pathParts[0] || 'Home';
+       currentAction = pathParts[1] || 'Index';
+ }
+
+  console.log('Current Location:', { controller: currentController, action: currentAction });
+
+        // Remove all active classes first
+  navLinks.forEach(link => link.classList.remove('active'));
+        document.querySelectorAll('.submenu-link').forEach(link => link.classList.remove('active'));
+   document.querySelectorAll('.submenu').forEach(submenu => {
+ submenu.classList.remove('show');
+  const parentLink = submenu.previousElementSibling;
+  if (parentLink) {
+  parentLink.setAttribute('aria-expanded', 'false');
             }
+   });
+
+     // Find matching links
+  let matchFound = false;
+
+        // First, check submenu links for exact match
+        document.querySelectorAll('.submenu-link').forEach(link => {
+      const linkController = link.getAttribute('data-controller');
+      const linkAction = link.getAttribute('data-action');
+
+if (linkController && linkAction) {
+       const controllerMatch = linkController.toLowerCase() === currentController.toLowerCase();
+  const actionMatch = linkAction.toLowerCase() === currentAction.toLowerCase();
+
+   if (controllerMatch && actionMatch) {
+    // Mark submenu link as active
+   link.classList.add('active');
+    matchFound = true;
+
+    // Expand parent submenu
+    const submenu = link.closest('.submenu');
+          if (submenu) {
+  submenu.classList.add('show');
+   
+     // Mark parent nav-link as active
+     const parentLink = submenu.previousElementSibling;
+       if (parentLink) {
+    parentLink.classList.add('active');
+       parentLink.setAttribute('aria-expanded', 'true');
+         }
+       }
+
+        console.log('Submenu link activated:', link.textContent.trim());
+         }
+     }
         });
+
+  // If no submenu match, check main nav links
+   if (!matchFound) {
+  navLinks.forEach(link => {
+   const linkController = link.getAttribute('data-controller');
+    const linkAction = link.getAttribute('data-action');
+
+    // Check if it's a toggle link (has submenu)
+const isToggle = link.getAttribute('data-bs-toggle') === 'collapse';
+       
+   if (!isToggle && linkController) {
+    const controllerMatch = linkController.toLowerCase() === currentController.toLowerCase();
+ const actionMatch = !linkAction || linkAction.toLowerCase() === currentAction.toLowerCase();
+
+        if (controllerMatch && actionMatch) {
+         link.classList.add('active');
+      matchFound = true;
+   console.log('Main link activated:', link.textContent.trim());
+    }
+ }
+   
+   // Check if current controller matches a submenu parent
+   if (isToggle && linkController) {
+ const controllers = linkController.split(',').map(c => c.trim().toLowerCase());
+if (controllers.includes(currentController.toLowerCase())) {
+  link.classList.add('active');
+       
+  // Expand the submenu
+    const submenuId = link.getAttribute('href');
+     if (submenuId) {
+   const submenu = document.querySelector(submenuId);
+     if (submenu) {
+        submenu.classList.add('show');
+ link.setAttribute('aria-expanded', 'true');
+  console.log('Parent submenu activated:', link.textContent.trim());
+    }
+ }
+         matchFound = true;
+  }
+    }
+    });
+        }
+
+        // Fallback: if still no match and we're on a controller page
+if (!matchFound && currentController) {
+     console.log('No exact match found, looking for controller-only match');
+       
+   // Try to find any link matching the controller
+   navLinks.forEach(link => {
+    const linkController = link.getAttribute('data-controller');
+if (linkController && linkController.toLowerCase() === currentController.toLowerCase()) {
+        link.classList.add('active');
+        
+       // If it's a submenu parent, expand it
+  const isToggle = link.getAttribute('data-bs-toggle') === 'collapse';
+        if (isToggle) {
+  const submenuId = link.getAttribute('href');
+            if (submenuId) {
+   const submenu = document.querySelector(submenuId);
+ if (submenu) {
+          submenu.classList.add('show');
+    link.setAttribute('aria-expanded', 'true');
+   }
+       }
+    }
+       console.log('Controller-only match activated:', link.textContent.trim());
+        }
+     });
+        }
     }
 
     // ========================================

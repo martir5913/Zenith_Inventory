@@ -404,11 +404,14 @@ padding 0.3s ease,
     color: var(--accent-cyan);
     font-weight: 500;
     background: rgba(0, 102, 204, 0.15);
+    border-left: 3px solid var(--primary-blue);
+    padding-left: 62px;
 }
 
 .submenu-link.active::before {
     transform: translateY(-50%) scale(1);
     box-shadow: 0 0 10px var(--accent-blue-glow);
+    background: var(--accent-cyan);
 }
 
 .sidebar.collapsed .submenu {

@@ -1,20 +1,103 @@
-﻿/* Set padding to keep content from hitting the edges */
+﻿/* ========================================
+   ZENITH INVENTORY - SITE GENERAL STYLES
+   ======================================== */
+
+/* Base Content Layout */
 .body-content {
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
+    margin: 0;
+    padding: 0;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
+/* Ensure container-fluid takes full width */
+.container-fluid {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Override Bootstrap default max-width for inputs */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+    max-width: 100%;
+}
+
+/* Form controls styling */
+.form-control {
+    max-width: 100%;
+}
+
+/* Description lists */
 .dl-horizontal dt {
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+/* ========================================
+   DASHBOARD & CARDS ENHANCEMENTS
+   ======================================== */
+
+/* Ensure cards display properly */
+.card {
+    border-radius: 10px;
+    margin-bottom: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Row spacing */
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.row > * {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* ========================================
+   RESPONSIVE TABLES
+   ======================================== */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+/* ========================================
+UTILITY OVERRIDES
+   ======================================== */
+
+/* Ensure headings don't have extra margins */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+}
+
+/* Link styles */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+text-decoration: none;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
 }

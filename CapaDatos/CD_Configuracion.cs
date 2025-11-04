@@ -1,4 +1,5 @@
 ﻿using CapaComun;
+using CapaComun.Excepciones;
 using CapaEntidad;
 using CapaEntidad.DTOs;
 using System;
@@ -56,11 +57,15 @@ namespace CapaDatos
                     return config;
                 }
 
-                throw new Exception("No se encontraron configuraciones de encriptación en la base de datos.");
+                throw new DataAccessException("No se encontraron configuraciones de encriptación en la base de datos.");
+            }
+            catch (DataAccessException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener configuración de encriptación: {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener configuración de encriptación: {ex.Message}", ex);
             }
         }
 
@@ -121,7 +126,7 @@ namespace CapaDatos
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener configuración por clave '{clave}': {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener configuración por clave '{clave}': {ex.Message}", ex);
             }
         }
 
@@ -159,7 +164,7 @@ namespace CapaDatos
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener todas las configuraciones: {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener todas las configuraciones: {ex.Message}", ex);
             }
         }
     }

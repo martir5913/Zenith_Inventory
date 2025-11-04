@@ -3,34 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Zenith_Inventory.Filters;
 
 namespace Zenith_Inventory.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
+        [AuthenticationFilter]
         public ActionResult Index()
         {
-            if (!EstaAutenticado())
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            return View();
+            // Soporte SPA - Devuelve PartialView si es petición AJAX
+            return ViewOrPartial();
         }
 
+        [AllowAnonymous]
         public ActionResult Login()
         {
             if (EstaAutenticado())
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View();
-        }
 
-        private bool EstaAutenticado()
-        {
-            return Session["IsAuthenticated"] != null &&
-                   (bool)Session["IsAuthenticated"] &&
-                   Session["UserId"] != null;
+            // Login siempre devuelve vista completa (con Layout)
+            // No debe usar SPA porque no está autenticado
+            return View();
         }
     }
 }

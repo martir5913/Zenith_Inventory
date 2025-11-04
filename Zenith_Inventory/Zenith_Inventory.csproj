@@ -121,7 +121,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CategoriasController.cs" />
+    <Compile Include="Controllers\EquiposController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\AuthenticationFilter.cs" />
+    <Compile Include="Filters\PermissionFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -138,10 +144,12 @@
     <Content Include="Content\css\Site.css" />
     <Content Include="Schema\000_Schema_Base.sql" />
     <Content Include="Schema\001_Schema.sql" />
+    <Content Include="Schema\002_Permisos_Categorias.sql" />
     <Content Include="Schema\002_Poblacion.sql" />
-    <Content Include="Scripts\layout-new.js" />
+    <Content Include="Scripts\Categorias\categorias.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\login.js" />
+    <Content Include="Scripts\zenith-spa.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -160,8 +168,16 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="http\Api-Categoria.http" />
     <None Include="packages.config" />
     <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Categoria\Index.cshtml" />
+    <Content Include="Views\Equipos\Categorias.cshtml" />
+    <Content Include="Views\Equipos\Index.cshtml" />
+    <Content Include="Views\Equipos\Marcas.cshtml" />
+    <Content Include="Views\Equipos\Modelos.cshtml" />
+    <Content Include="Views\Categorias\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CapaComun\CapaComun.csproj">

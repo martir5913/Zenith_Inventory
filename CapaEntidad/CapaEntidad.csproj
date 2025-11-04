@@ -44,10 +44,14 @@
     <Compile Include="CE_Configuracion.cs" />
     <Compile Include="CE_Permiso.cs" />
     <Compile Include="CE_Rol.cs" />
+    <Compile Include="DTOs\Categoria\CE_CategoriaCreateDTO.cs" />
+    <Compile Include="DTOs\Categoria\CE_CategoriaListDTO.cs" />
+    <Compile Include="DTOs\Categoria\CE_CategoriaUpdateDTO.cs" />
     <Compile Include="DTOs\CE_EncryptionConfig.cs" />
     <Compile Include="DTOs\CE_LoginRequest.cs" />
     <Compile Include="DTOs\CE_LoginResponse.cs" />
     <Compile Include="CE_Usuario.cs" />
+    <Compile Include="DTOs\Common\CE_PagedResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +59,9 @@
       <Project>{b0a7c98b-c7ef-4e38-90b5-9eda243afde1}</Project>
       <Name>CapaComun</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
