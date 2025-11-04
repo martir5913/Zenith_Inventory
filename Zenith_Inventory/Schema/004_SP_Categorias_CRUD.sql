@@ -46,6 +46,8 @@ BEGIN
     SET NOCOUNT ON;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         -- Validar que no exista una categoría con el mismo nombre
         IF EXISTS (SELECT 1 FROM ZI_GENERAL.ZI_CATEGORIAS WHERE CAT_Nombre = @Nombre AND CAT_Estado = 1)
         BEGIN
@@ -53,8 +55,12 @@ BEGIN
             RETURN;
         END
 
+        -- Generar nuevo ID usando la secuencia
+        SELECT @IdCategoria = NEXT VALUE FOR ZI_GENERAL.Seq_Categorias;
+
         -- Insertar nueva categoría
         INSERT INTO ZI_GENERAL.ZI_CATEGORIAS (
+            CAT_Id,
             CAT_Nombre,
             CAT_Descripcion,
             CAT_Estado,
@@ -62,6 +68,7 @@ BEGIN
             CAT_UsuarioCreacion,
             CAT_IpCreacion
         ) VALUES (
+            @IdCategoria,
             @Nombre,
             @Descripcion,
             @Activo,
@@ -69,9 +76,6 @@ BEGIN
             @UsuarioCreacion,
             @IpCreacion
         );
-
-        -- Obtener el ID generado
-        SET @IdCategoria = SCOPE_IDENTITY();
 
         -- Registrar en bitácora
         INSERT INTO ZI_GENERAL.ZI_BITACORAAUDITORIA (
@@ -90,8 +94,11 @@ BEGIN
             GETDATE()
         );
 
+        COMMIT TRANSACTION;
+
     END TRY
     BEGIN CATCH
+        ROLLBACK TRANSACTION;
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         RAISERROR(@ErrorMessage, 16, 1);
     END CATCH
@@ -113,6 +120,8 @@ BEGIN
     SET NOCOUNT ON;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         -- Validar que la categoría existe
         IF NOT EXISTS (SELECT 1 FROM ZI_GENERAL.ZI_CATEGORIAS WHERE CAT_Id = @IdCategoria)
         BEGIN
@@ -155,8 +164,11 @@ BEGIN
             GETDATE()
         );
 
+        COMMIT TRANSACTION;
+
     END TRY
     BEGIN CATCH
+        ROLLBACK TRANSACTION;
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         RAISERROR(@ErrorMessage, 16, 1);
     END CATCH
@@ -175,6 +187,8 @@ BEGIN
     SET NOCOUNT ON;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         -- Validar que la categoría existe
         DECLARE @NombreCategoria NVARCHAR(100);
         SELECT @NombreCategoria = CAT_Nombre
@@ -220,8 +234,11 @@ BEGIN
             GETDATE()
         );
 
+        COMMIT TRANSACTION;
+
     END TRY
     BEGIN CATCH
+        ROLLBACK TRANSACTION;
         DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
         RAISERROR(@ErrorMessage, 16, 1);
     END CATCH

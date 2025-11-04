@@ -48,7 +48,7 @@ $(document).ready(function () {
 
 function loadCategories() {
     $.ajax({
-        url: '/Equipos/GetCategorias',
+        url: '/Categorias/GetCategorias',
         type: 'GET',
         data: {
             page: currentPage,
@@ -86,9 +86,9 @@ function populateCategoriesTable(categories) {
             '<td><span class="badge ' + (category.Activo ? 'badge-success' : 'badge-secondary') + '">' + (category.Activo ? 'Activo' : 'Inactivo') + '</span></td>' +
             '<td class="text-center"><span class="subcategory-count">' + category.TotalSubcategorias + '</span></td>' +
             '<td class="action-buttons">' +
-                '<button class="btn btn-info btn-sm btn-icon-only view-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles" data-id="' + category.IdCategoria + '"><i class="fas fa-eye"></i></button> ' +
-                '<button class="btn btn-warning btn-sm btn-icon-only edit-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-id="' + category.IdCategoria + '"><i class="fas fa-edit"></i></button> ' +
-                '<button class="btn btn-danger btn-sm btn-icon-only delete-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" data-id="' + category.IdCategoria + '"><i class="fas fa-trash"></i></button>' +
+            '<button class="btn btn-info btn-sm btn-icon-only view-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles" data-id="' + category.IdCategoria + '"><i class="fas fa-eye"></i></button> ' +
+            '<button class="btn btn-warning btn-sm btn-icon-only edit-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-id="' + category.IdCategoria + '"><i class="fas fa-edit"></i></button> ' +
+            '<button class="btn btn-danger btn-sm btn-icon-only delete-category-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" data-id="' + category.IdCategoria + '"><i class="fas fa-trash"></i></button>' +
             '</td>' +
             '</tr>';
         tbody.append(row);
@@ -139,7 +139,7 @@ function saveCategory() {
         return;
     }
 
-    var url = isEditMode ? '/Equipos/UpdateCategoria' : '/Equipos/CreateCategoria';
+    var url = isEditMode ? '/Categorias/UpdateCategoria' : '/Categorias/CreateCategoria';
     var data = isEditMode ?
         { id: editCategoryId, nombre: name, descripcion: description, activo: active } :
         { nombre: name, descripcion: description, activo: active };
@@ -149,6 +149,7 @@ function saveCategory() {
         type: 'POST',
         data: data,
         success: function (response) {
+            console.log('Save category success response:', response);
             if (response.success) {
                 $('#categoryModal').modal('hide');
                 loadCategories();
@@ -157,7 +158,8 @@ function saveCategory() {
                 toastr.error(response.message, 'Error');
             }
         },
-        error: function () {
+        error: function (xhr, status, error) {
+            console.log('Save category error:', xhr, status, error);
             toastr.error('Error al guardar la categoría.', 'Error');
         }
     });
@@ -165,7 +167,7 @@ function saveCategory() {
 
 function loadCategoryDetails(categoryId) {
     $.ajax({
-        url: '/Equipos/GetCategoriaDetalle',
+        url: '/Categorias/GetCategoriaDetalle',
         type: 'GET',
         data: { id: categoryId },
         success: function (response) {
@@ -201,7 +203,7 @@ function deleteCategory(categoryId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Equipos/DeleteCategoria',
+                url: '/Categorias/DeleteCategoria',
                 type: 'POST',
                 data: { id: categoryId },
                 success: function (response) {
@@ -222,7 +224,7 @@ function deleteCategory(categoryId) {
 
 function viewCategoryDetails(categoryId) {
     $.ajax({
-        url: '/Equipos/GetCategoriaDetalle',
+        url: '/Categorias/GetCategoriaDetalle',
         type: 'GET',
         data: { id: categoryId },
         success: function (response) {
@@ -254,5 +256,5 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return (text || '').replace(/[&<>"']/g, function(m) { return map[m]; });
+    return (text || '').replace(/[&<>"']/g, function (m) { return map[m]; });
 }

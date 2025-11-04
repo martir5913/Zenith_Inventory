@@ -122,6 +122,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\Catalogos\CategoriasController.cs" />
+    <Compile Include="Controllers\Catalogos\SubCategoriasController.cs" />
     <Compile Include="Controllers\EquiposController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -149,8 +151,7 @@
     <Content Include="Schema\003_SP.sql" />
     <Content Include="Schema\004_SP_Categorias_CRUD.sql" />
     <Content Include="Schema\005_Migration_Categorias_Auditoria.sql" />
-    <Content Include="Scripts\categorias.js" />
-    <Content Include="Scripts\Categorias\categorias.js" />
+    <Content Include="Scripts\Catalogos\categorias.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\login.js" />
     <Content Include="Web.config" />
@@ -178,7 +179,8 @@
     <Content Include="Views\Equipos\Index.cshtml" />
     <Content Include="Views\Equipos\Marcas.cshtml" />
     <Content Include="Views\Equipos\Modelos.cshtml" />
-    <Content Include="Views\Equipos\Categorias.cshtml" />
+    <Content Include="Views\Categorias\Index.cshtml" />
+    <Content Include="Views\SubCategorias\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CapaComun\CapaComun.csproj">
