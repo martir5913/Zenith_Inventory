@@ -418,6 +418,57 @@ padding 0.3s ease,
     display: none;
 }
 
+/* Nested submenu styles */
+.submenu .submenu {
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+.submenu .submenu-link {
+    padding-left: 80px;
+    font-size: 13px;
+}
+
+.submenu .submenu-link::before {
+    left: 60px;
+}
+
+.submenu .submenu-link.active {
+    padding-left: 82px;
+}
+
+/* Specific styles for deeply nested submenu links */
+.nested-submenu-link {
+    padding-left: 90px !important;
+    font-size: 12px !important;
+}
+
+.nested-submenu-link::before {
+    left: 70px !important;
+}
+
+.nested-submenu-link.active {
+    padding-left: 92px !important;
+}
+
+/* Arrow icon for submenu-links */
+.submenu-link .arrow-icon {
+    margin-left: 10px;
+    font-size: 12px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+    color 0.3s ease;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.submenu-link:hover .arrow-icon {
+    color: var(--primary-white);
+}
+
+.submenu-link[aria-expanded="true"] .arrow-icon {
+    transform: rotate(180deg);
+    color: var(--primary-blue);
+}
+
 /* Sidebar Footer */
 .sidebar-footer {
     padding: 15px 20px;

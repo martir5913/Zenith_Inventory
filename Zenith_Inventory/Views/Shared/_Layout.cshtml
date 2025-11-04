@@ -68,6 +68,96 @@
                                data-action="Index">Lista de Equipos</a>
                         </li>
                         <li>
+                            <a href="#movimientosSubmenu"
+                               class="submenu-link"
+                               data-bs-toggle="collapse"
+                               data-controller="Inventario">Movimientos <i class="bi bi-chevron-down arrow-icon"></i></a>
+                            <ul class="collapse submenu" id="movimientosSubmenu">
+                                <li>
+                                    <a href="@Url.Action("Ingresos", "Inventario")"
+                                       class="submenu-link nested-submenu-link"
+                                       data-controller="Inventario"
+                                       data-action="Ingresos">Ingresos</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Egresos", "Inventario")"
+                                       class="submenu-link nested-submenu-link"
+                                       data-controller="Inventario"
+                                       data-action="Egresos">Entregas / Egresos</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Devoluciones", "Inventario")"
+                                       class="submenu-link nested-submenu-link"
+                                       data-controller="Inventario"
+                                       data-action="Devoluciones">Devoluciones</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Kardex", "Inventario")"
+                                       class="submenu-link nested-submenu-link"
+                                       data-controller="Inventario"
+                                       data-action="Kardex">Kardex</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Inventario -->
+                <li class="nav-item">
+                    <a href="#inventarioSubmenu"
+                       class="nav-link"
+                       data-bs-toggle="collapse"
+                       data-controller="Inventario,Bodegas,Agentes,Contratos">
+                        <i class="bi bi-box-seam"></i>
+                        <span class="nav-text">Inventario</span>
+                        <i class="bi bi-chevron-down arrow-icon"></i>
+                    </a>
+                    <ul class="collapse submenu" id="inventarioSubmenu">
+                        <li>
+                            <a href="@Url.Action("Index", "Bodegas")"
+                               class="submenu-link"
+                               data-controller="Bodegas"
+                               data-action="Index">Bodegas</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Agentes")"
+                               class="submenu-link"
+                               data-controller="Agentes"
+                               data-action="Index">Agentes IT</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Contratos")"
+                               class="submenu-link"
+                               data-controller="Contratos"
+                               data-action="Index">Contratos</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Catálogos -->
+                <li class="nav-item">
+                    <a href="#catalogosSubmenu"
+                       class="nav-link"
+                       data-bs-toggle="collapse"
+                       data-controller="Equipos">
+                        <i class="bi bi-tags"></i>
+                        <span class="nav-text">Catálogos</span>
+                        <i class="bi bi-chevron-down arrow-icon"></i>
+                    </a>
+                    <ul class="collapse submenu" id="catalogosSubmenu">
+                        <li>
+                            <a href="@Url.Action("Categorias", "Equipos")"
+                               class="submenu-link"
+                               data-controller="Equipos"
+                               data-action="Categorias">Categorías</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Subcategorias", "Equipos")"
+                               class="submenu-link"
+                               data-controller="Equipos"
+                               data-action="Subcategorias">Subcategorías</a>
+                        </li>
+                        <li>
                             <a href="@Url.Action("Marcas", "Equipos")"
                                class="submenu-link"
                                data-controller="Equipos"
@@ -80,118 +170,56 @@
                                data-action="Modelos">Modelos</a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Categorias", "Equipos")"
+                            <a href="@Url.Action("Estados", "Equipos")"
                                class="submenu-link"
                                data-controller="Equipos"
-                               data-action="Categorias">Categorías</a>
+                               data-action="Estados">Estados de Equipo</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Ubicaciones", "Equipos")"
+                               class="submenu-link"
+                               data-controller="Equipos"
+                               data-action="Ubicaciones">Ubicaciones</a>
                         </li>
                     </ul>
                 </li>
 
-                <!-- Inventario -->
+                <!-- Administración -->
                 <li class="nav-item">
-                    <a href="#inventarioSubmenu"
+                    <a href="#administracionSubmenu"
                        class="nav-link"
                        data-bs-toggle="collapse"
-                       data-controller="Inventario">
-                        <i class="bi bi-box-seam"></i>
-                        <span class="nav-text">Inventario</span>
+                       data-controller="Usuarios,Roles,Permisos">
+                        <i class="bi bi-gear"></i>
+                        <span class="nav-text">Administración</span>
                         <i class="bi bi-chevron-down arrow-icon"></i>
                     </a>
-                    <ul class="collapse submenu" id="inventarioSubmenu">
+                    <ul class="collapse submenu" id="administracionSubmenu">
                         <li>
-                            <a href="@Url.Action("Ingresos", "Inventario")"
+                            <a href="@Url.Action("Index", "Usuarios")"
                                class="submenu-link"
-                               data-controller="Inventario"
-                               data-action="Ingresos">Ingresos</a>
+                               data-controller="Usuarios"
+                               data-action="Index">Usuarios</a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Egresos", "Inventario")"
+                            <a href="#seguridadSubmenu"
                                class="submenu-link"
-                               data-controller="Inventario"
-                               data-action="Egresos">Egresos</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Devoluciones", "Inventario")"
-                               class="submenu-link"
-                               data-controller="Inventario"
-                               data-action="Devoluciones">Devoluciones</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Kardex", "Inventario")"
-                               class="submenu-link"
-                               data-controller="Inventario"
-                               data-action="Kardex">Kardex</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Bodegas -->
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Bodegas")"
-                       class="nav-link"
-                       data-controller="Bodegas"
-                       data-action="Index">
-                        <i class="bi bi-building"></i>
-                        <span class="nav-text">Bodegas</span>
-                    </a>
-                </li>
-
-                <!-- Usuarios -->
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Usuarios")"
-                       class="nav-link"
-                       data-controller="Usuarios"
-                       data-action="Index">
-                        <i class="bi bi-people"></i>
-                        <span class="nav-text">Usuarios</span>
-                    </a>
-                </li>
-
-                <!-- Agentes IT -->
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Agentes")"
-                       class="nav-link"
-                       data-controller="Agentes"
-                       data-action="Index">
-                        <i class="bi bi-person-badge"></i>
-                        <span class="nav-text">Agentes IT</span>
-                    </a>
-                </li>
-
-                <!-- Contratos -->
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Contratos")"
-                       class="nav-link"
-                       data-controller="Contratos"
-                       data-action="Index">
-                        <i class="bi bi-file-earmark-text"></i>
-                        <span class="nav-text">Contratos</span>
-                    </a>
-                </li>
-
-                <!-- Roles y Permisos -->
-                <li class="nav-item">
-                    <a href="#rolesSubmenu"
-                       class="nav-link"
-                       data-bs-toggle="collapse"
-                       data-controller="Roles,Permisos">
-                        <i class="bi bi-shield-lock"></i>
-                        <span class="nav-text">Seguridad</span>
-                        <i class="bi bi-chevron-down arrow-icon"></i>
-                    </a>
-                    <ul class="collapse submenu" id="rolesSubmenu">
-                        <li>
-                            <a href="@Url.Action("Index", "Roles")"
-                               class="submenu-link"
-                               data-controller="Roles"
-                               data-action="Index">Roles</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Index", "Permisos")"
-                               class="submenu-link"
-                               data-controller="Permisos"
-                               data-action="Index">Permisos</a>
+                               data-bs-toggle="collapse"
+                               data-controller="Roles,Permisos">Roles & Permisos <i class="bi bi-chevron-down arrow-icon"></i></a>
+                            <ul class="collapse submenu" id="seguridadSubmenu">
+                                <li>
+                                    <a href="@Url.Action("Index", "Roles")"
+                                       class="submenu-link"
+                                       data-controller="Roles"
+                                       data-action="Index">Roles</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "Permisos")"
+                                       class="submenu-link"
+                                       data-controller="Permisos"
+                                       data-action="Index">Permisos</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </li>
