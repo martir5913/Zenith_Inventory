@@ -16,7 +16,6 @@ const CategoriasApp = {
     },
 
     init() {
-        console.log('Inicializando Categorías App...');
         this.bindEvents();
         this.cargarCategorias();
     },
@@ -29,7 +28,7 @@ const CategoriasApp = {
                 this.estado.searchTerm = $('#txtBuscar').val();
                 this.estado.currentPage = 1;
                 this.cargarCategorias();
-            }, 500);
+            }, 150);
         });
 
         $('#selectPageSize').on('change', () => {
@@ -56,45 +55,43 @@ const CategoriasApp = {
         });
     },
 
-    async cargarCategorias() {
-        try {
-            this.mostrarLoading(true);
+    cargarCategorias() {
+        this.mostrarLoading(true);
 
-            const url = `/Categorias/Listar?pageNumber=${this.estado.currentPage}&pageSize=${this.estado.pageSize}&searchTerm=${encodeURIComponent(this.estado.searchTerm || '')}`;
+        const url = `/Categorias/Listar?pageNumber=${this.estado.currentPage}&pageSize=${this.estado.pageSize}&searchTerm=${encodeURIComponent(this.estado.searchTerm || '')}`;
 
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            success: (result) => {
+                if (result.success) {
+                    this.estado.categorias = result.data;
+                    this.estado.totalRecords = result.pagination.totalRecords;
+                    this.estado.totalPages = result.pagination.totalPages;
+                    this.estado.currentPage = result.pagination.currentPage;
+
+                    this.renderCategorias();
+                    this.renderPaginacion();
+                    this.renderInfoRegistros();
+                } else {
+                    this.mostrarError(result.message);
+
+                    if (result.accessDenied) {
+                        setTimeout(() => {
+                            window.location.href = '/Account/Login';
+                        }, 500);
+                    }
                 }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.estado.categorias = result.data;
-                this.estado.totalRecords = result.pagination.totalRecords;
-                this.estado.totalPages = result.pagination.totalPages;
-                this.estado.currentPage = result.pagination.currentPage;
-
-                this.renderCategorias();
-                this.renderPaginacion();
-                this.renderInfoRegistros();
-            } else {
-                this.mostrarError(result.message);
-
-                if (result.accessDenied) {
-                    setTimeout(() => {
-                        window.location.href = '/Account/Login';
-                    }, 2000);
-                }
+            },
+            error: (xhr, status, error) => {
+                console.error('Error al cargar categorías:', error);
+                this.mostrarError('Error al cargar las categorías. Por favor, intente nuevamente.');
+            },
+            complete: () => {
+                this.mostrarLoading(false);
             }
-        } catch (error) {
-            console.error('Error al cargar categorías:', error);
-            this.mostrarError('Error al cargar las categorías. Por favor, intente nuevamente.');
-        } finally {
-            this.mostrarLoading(false);
-        }
+        });
     },
 
     renderCategorias() {
@@ -119,36 +116,36 @@ const CategoriasApp = {
                 : '<span class="badge badge-secondary"><i class="fas fa-times"></i> Inactivo</span>';
 
             const row = `
-            <tr>
-                <td>${cat.IdCategoria}</td>
-               <td><strong>${this.escapeHtml(cat.Nombre)}</strong></td>
-                  <td>${this.escapeHtml(cat.Descripcion || '-')}</td>
-                          <td class="text-center">
-                  <span class="badge badge-info">${cat.TotalSubcategorias}</span>
-                 </td>
-                            <td class="text-center">${estadoBadge}</td>
-                       <td class="text-center">
-                     <div class="btn-group" role="group">
-                   <button type="button" 
-                          class="btn btn-sm btn-info" 
-                              onclick="CategoriasApp.editar(${cat.IdCategoria})"
+                <tr>
+                    <td>${cat.IdCategoria}</td>
+                    <td><strong>${this.escapeHtml(cat.Nombre)}</strong></td>
+                    <td>${this.escapeHtml(cat.Descripcion || '-')}</td>
+                    <td class="text-center">
+                        <span class="badge badge-info">${cat.TotalSubcategorias}</span>
+                    </td>
+                    <td class="text-center">${estadoBadge}</td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" 
+                            class="btn btn-sm btn-info" 
+                            onclick="CategoriasApp.editar(${cat.IdCategoria})"
                             title="Editar">
-                        <i class="fas fa-edit"></i>
-                   </button>
-                      <button type="button" 
-                               class="btn btn-sm ${cat.Activo ? 'btn-warning' : 'btn-success'}" 
-                           onclick="CategoriasApp.cambiarEstado(${cat.IdCategoria}, ${!cat.Activo})"
-                          title="${cat.Activo ? 'Desactivar' : 'Activar'}">
-                         <i class="fas fa-${cat.Activo ? 'ban' : 'check'}"></i>
-                         </button>
-                                  <button type="button" 
-                       class="btn btn-sm btn-danger" 
-                          onclick="CategoriasApp.eliminar(${cat.IdCategoria})"
-                              title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                         </button>
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" 
+                            class="btn btn-sm ${cat.Activo ? 'btn-warning' : 'btn-success'}" 
+                            onclick="CategoriasApp.cambiarEstado(${cat.IdCategoria}, ${!cat.Activo})"
+                            title="${cat.Activo ? 'Desactivar' : 'Activar'}">
+                                <i class="fas fa-${cat.Activo ? 'ban' : 'check'}"></i>
+                            </button>
+                            <button type="button" 
+                            class="btn btn-sm btn-danger" 
+                            onclick="CategoriasApp.eliminar(${cat.IdCategoria})"
+                            title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
-                     </td>
+                    </td>
                 </tr>
             `;
             tbody.append(row);
@@ -165,22 +162,23 @@ const CategoriasApp = {
 
         const disabledPrev = this.estado.currentPage === 1 ? 'disabled' : '';
         paginacion.append(`
-                   <li class="page-item ${disabledPrev}">
-                  <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.currentPage - 1}); return false;">
-             <i class="fas fa-chevron-left"></i>
-              </a>
+            <li class="page-item ${disabledPrev}">
+                <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.currentPage - 1}); return false;">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
             </li>
-  `);
+        `);
 
         const startPage = Math.max(1, this.estado.currentPage - 2);
         const endPage = Math.min(this.estado.totalPages, this.estado.currentPage + 2);
 
         if (startPage > 1) {
             paginacion.append(`
-<li class="page-item">
-        <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(1); return false;">1</a>
-  </li>
-  `);
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(1); return false;">1</a>
+                </li>
+            `);
+
             if (startPage > 2) {
                 paginacion.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
             }
@@ -189,10 +187,10 @@ const CategoriasApp = {
         for (let i = startPage; i <= endPage; i++) {
             const active = i === this.estado.currentPage ? 'active' : '';
             paginacion.append(`
-            <li class="page-item ${active}">
-       <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${i}); return false;">${i}</a>
-  </li>
-          `);
+                <li class="page-item ${active}">
+                    <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${i}); return false;">${i}</a>
+                </li>
+            `);
         }
 
         if (endPage < this.estado.totalPages) {
@@ -200,20 +198,20 @@ const CategoriasApp = {
                 paginacion.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
             }
             paginacion.append(`
- <li class="page-item">
-         <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.totalPages}); return false;">${this.estado.totalPages}</a>
-  </li>
-    `);
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.totalPages}); return false;">${this.estado.totalPages}</a>
+                </li>
+            `);
         }
 
         const disabledNext = this.estado.currentPage === this.estado.totalPages ? 'disabled' : '';
         paginacion.append(`
-  <li class="page-item ${disabledNext}">
- <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.currentPage + 1}); return false;">
-     <i class="fas fa-chevron-right"></i>
-   </a>
-          </li>
-    `);
+            <li class="page-item ${disabledNext}">
+                <a class="page-link" href="#" onclick="CategoriasApp.irAPagina(${this.estado.currentPage + 1}); return false;">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        `);
     },
 
     renderInfoRegistros() {
@@ -275,7 +273,7 @@ const CategoriasApp = {
         $('#modalCategoria').modal('show');
     },
 
-    async guardarCategoria() {
+    guardarCategoria() {
         if (!this.validarFormulario()) {
             return;
         }
@@ -288,36 +286,33 @@ const CategoriasApp = {
         };
 
         const url = this.estado.modoEdicion ? '/Categorias/Actualizar' : '/Categorias/Crear';
-        const metodo = 'POST';
+        const token = $('input[name="__RequestVerificationToken"]').val();
 
-        try {
-            const token = $('input[name="__RequestVerificationToken"]').val();
-
-            const response = await fetch(url, {
-                method: metodo,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': token
-                },
-                body: JSON.stringify(categoria)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.mostrarExito(result.message);
-                $('#modalCategoria').modal('hide');
-                this.cargarCategorias();
-            } else {
-                this.mostrarError(result.message);
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(categoria),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: (result) => {
+                if (result.success) {
+                    this.mostrarExito(result.message);
+                    $('#modalCategoria').modal('hide');
+                    this.cargarCategorias();
+                } else {
+                    this.mostrarError(result.message);
+                }
+            },
+            error: (xhr, status, error) => {
+                console.error('Error al guardar categoría:', error);
+                this.mostrarError('Error al guardar la categoría. Por favor, intente nuevamente.');
             }
-        } catch (error) {
-            console.error('Error al guardar categoría:', error);
-            this.mostrarError('Error al guardar la categoría. Por favor, intente nuevamente.');
-        }
+        });
     },
 
-    async eliminar(id) {
+    eliminar(id) {
         const categoria = this.estado.categorias.find(c => c.IdCategoria === id);
 
         if (!categoria) {
@@ -325,7 +320,7 @@ const CategoriasApp = {
             return;
         }
 
-        const confirmado = await Swal.fire({
+        Swal.fire({
             title: '¿Está seguro?',
             text: `¿Desea eliminar la categoría "${categoria.Nombre}"?`,
             icon: 'warning',
@@ -334,38 +329,35 @@ const CategoriasApp = {
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
-        });
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const token = $('input[name="__RequestVerificationToken"]').val();
 
-        if (!confirmado.isConfirmed) {
-            return;
-        }
-
-        try {
-            const token = $('input[name="__RequestVerificationToken"]').val();
-
-            const response = await fetch(`/Categorias/Eliminar/${id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': token
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.mostrarExito(result.message);
-                this.cargarCategorias();
-            } else {
-                this.mostrarError(result.message);
+                $.ajax({
+                    url: `/Categorias/Eliminar/${id}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: (result) => {
+                        if (result.success) {
+                            this.mostrarExito(result.message);
+                            this.cargarCategorias();
+                        } else {
+                            this.mostrarError(result.message);
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error al eliminar categoría:', error);
+                        this.mostrarError('Error al eliminar la categoría. Por favor, intente nuevamente.');
+                    }
+                });
             }
-        } catch (error) {
-            console.error('Error al eliminar categoría:', error);
-            this.mostrarError('Error al eliminar la categoría. Por favor, intente nuevamente.');
-        }
+        });
     },
 
-    async cambiarEstado(id, nuevoEstado) {
+    cambiarEstado(id, nuevoEstado) {
         const categoria = this.estado.categorias.find(c => c.IdCategoria === id);
 
         if (!categoria) {
@@ -374,30 +366,28 @@ const CategoriasApp = {
         }
 
         const accion = nuevoEstado ? 'activar' : 'desactivar';
+        const token = $('input[name="__RequestVerificationToken"]').val();
 
-        try {
-            const token = $('input[name="__RequestVerificationToken"]').val();
-
-            const response = await fetch(`/Categorias/CambiarEstado/${id}?activo=${nuevoEstado}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': token
+        $.ajax({
+            url: `/Categorias/CambiarEstado/${id}?activo=${nuevoEstado}`,
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: (result) => {
+                if (result.success) {
+                    this.mostrarExito(result.message);
+                    this.cargarCategorias();
+                } else {
+                    this.mostrarError(result.message);
                 }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.mostrarExito(result.message);
-                this.cargarCategorias();
-            } else {
-                this.mostrarError(result.message);
+            },
+            error: (xhr, status, error) => {
+                console.error(`Error al ${accion} categoría:`, error);
+                this.mostrarError(`Error al ${accion} la categoría. Por favor, intente nuevamente.`);
             }
-        } catch (error) {
-            console.error(`Error al ${accion} categoría:`, error);
-            this.mostrarError(`Error al ${accion} la categoría. Por favor, intente nuevamente.`);
-        }
+        });
     },
 
     validarFormulario() {
@@ -450,7 +440,7 @@ const CategoriasApp = {
     },
 
     /**
-     * Escapa HTML para prevenir XSS
+   * Escapa HTML para prevenir XSS
      */
     escapeHtml(text) {
         if (!text) return '';

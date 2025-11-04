@@ -172,7 +172,6 @@
     <None Include="packages.config" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
-    <Content Include="Views\Categoria\Index.cshtml" />
     <Content Include="Views\Equipos\Categorias.cshtml" />
     <Content Include="Views\Equipos\Index.cshtml" />
     <Content Include="Views\Equipos\Marcas.cshtml" />

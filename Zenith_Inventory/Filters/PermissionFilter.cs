@@ -70,21 +70,21 @@ namespace Zenith_Inventory.Filters
                     filterContext.Result = new ContentResult
                     {
                         Content = @"
-     <div class='container mt-5'>
-    <div class='alert alert-danger text-center' role='alert'>
-     <i class='bi bi-shield-exclamation' style='font-size: 3rem;'></i>
-    <h2 class='mt-3'>Acceso Denegado</h2>
-             <p class='lead'>No tiene permisos para acceder a esta sección.</p>
-         <hr>
-          <p class='mb-0'>
-     Si cree que esto es un error, contacte al administrador del sistema.
-          </p>
-  <button class='btn btn-primary mt-3' onclick='window.history.back()'>
-     <i class='bi bi-arrow-left'></i> Volver
-   </button>
-       </div>
-         </div>
-             ",
+                                <div class='container mt-5'>
+                                    <div class='alert alert-danger text-center' role='alert'>
+                                        <i class='bi bi-shield-exclamation' style='font-size: 3rem;'></i>
+                                        <h2 class='mt-3'>Acceso Denegado</h2>
+                                        <p class='lead'>No tiene permisos para acceder a esta sección.</p>
+                                        <hr>
+                                        <p class='mb-0'>
+                                            Si cree que esto es un error, contacte al administrador del sistema.
+                                        </p>
+                                        <button class='btn btn-primary mt-3' onclick='window.history.back()'>
+                                            <i class='bi bi-arrow-left'></i> Volver
+                                        </button>
+                                    </div>
+                                </div>
+                                         ",
                         ContentType = "text/html"
                     };
                 }

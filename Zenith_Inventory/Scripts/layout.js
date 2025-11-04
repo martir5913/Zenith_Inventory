@@ -290,7 +290,19 @@ setTimeout(() => {
           }, 300);
         }
             } else {
-      // Regular link - close mobile menu
+      // Regular link - close all open submenus and mobile menu
+                // Close all open submenus
+                const allSubmenus = document.querySelectorAll('.submenu');
+                allSubmenus.forEach(menu => {
+                    if (menu.classList.contains('show')) {
+                        menu.classList.remove('show');
+                        const parentLink = menu.previousElementSibling;
+                        if (parentLink) {
+                            parentLink.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+
          if (window.innerWidth <= 768) {
      sidebar.classList.remove('show');
         removeOverlay();
