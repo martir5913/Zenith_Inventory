@@ -1,6 +1,8 @@
+using CapaComun.Excepciones;
 using CapaEntidad.DTOs.Categoria;
 using CapaEntidad.DTOs.Common;
 using CapaNegocio.Categoria;
+using System;
 using System.Web.Mvc;
 using Zenith_Inventory.Filters;
 
@@ -69,21 +71,8 @@ namespace Zenith_Inventory.Controllers
         [PermissionFilter("CATEGORIAS", "LEER")]
         public ActionResult Categorias(int page = 1, string search = null)
         {
-            try
-            {
-                const int pageSize = 10;
-
-                CE_PagedResult<CE_CategoriaListDTO> resultado = _negocioCategoria.ObtenerCategoriasPaginadas(page, pageSize, search);
-
-                ViewBag.SearchTerm = search;
-                ViewBag.Title = "Gestión de Categorías";
-                return ViewOrPartial(resultado); // Soporte SPA
-            }
-            catch (System.Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return ViewOrPartial(new CE_PagedResult<CE_CategoriaListDTO>()); // Soporte SPA
-            }
+            ViewBag.Title = "Gestión de Categorías";
+            return View();
         }
 
         [HttpGet]
@@ -118,35 +107,105 @@ namespace Zenith_Inventory.Controllers
         [PermissionFilter("CATEGORIAS", "CREAR")]
         public JsonResult CreateCategoria(string nombre, string descripcion, bool activo = true)
         {
-            return JsonSuccess("Categoría creada exitosamente");
+            try
+            {
+                var categoriaDTO = new CE_CategoriaCreateDTO
+                {
+                    Nombre = nombre,
+                    Descripcion = descripcion,
+                    Activo = activo
+                };
+
+                string usuarioCreacion = ObtenerUsernameSesion();
+                int idCategoria = _negocioCategoria.CrearCategoria(categoriaDTO, usuarioCreacion);
+
+                return JsonSuccess("Categoría creada exitosamente", new { idCategoria });
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al crear categoría", ex.Message);
+            }
         }
 
         [HttpPost]
         [PermissionFilter("CATEGORIAS", "ACTUALIZAR")]
         public JsonResult UpdateCategoria(int id, string nombre, string descripcion, bool activo)
         {
-            return JsonSuccess("Categoría actualizada exitosamente");
+            try
+            {
+                var categoriaDTO = new CE_CategoriaUpdateDTO
+                {
+                    IdCategoria = id,
+                    Nombre = nombre,
+                    Descripcion = descripcion,
+                    Activo = activo
+                };
+
+                string usuarioModificacion = ObtenerUsernameSesion();
+                _negocioCategoria.ActualizarCategoria(categoriaDTO, usuarioModificacion);
+
+                return JsonSuccess("Categoría actualizada exitosamente");
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al actualizar categoría", ex.Message);
+            }
         }
 
         [HttpPost]
         [PermissionFilter("CATEGORIAS", "ELIMINAR")]
         public JsonResult DeleteCategoria(int id)
         {
-            return JsonSuccess("Categoría eliminada exitosamente");
+            try
+            {
+                string usuarioEliminacion = ObtenerUsernameSesion();
+                _negocioCategoria.EliminarCategoria(id, usuarioEliminacion);
+
+                return JsonSuccess("Categoría eliminada exitosamente");
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al eliminar categoría", ex.Message);
+            }
         }
 
         [HttpGet]
         [PermissionFilter("CATEGORIAS", "LEER")]
         public JsonResult GetCategoriaDetalle(int id)
         {
-            return JsonSuccess("Detalles obtenidos exitosamente", new
+            try
             {
-                id = id,
-                nombre = "Categoría de ejemplo",
-                descripcion = "Descripción de ejemplo",
-                activo = true,
-                totalSubcategorias = 0
-            });
+                var categoria = _negocioCategoria.ObtenerCategoriaPorId(id);
+
+                return JsonSuccess("Detalles obtenidos exitosamente", new
+                {
+                    id = categoria.IdCategoria,
+                    nombre = categoria.Nombre,
+                    descripcion = categoria.Descripcion,
+                    activo = categoria.Activo,
+                    totalSubcategorias = categoria.TotalSubcategorias
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al obtener detalles de categoría", ex.Message);
+            }
         }
 
         #endregion

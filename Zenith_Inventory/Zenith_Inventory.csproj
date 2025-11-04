@@ -122,7 +122,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\EquiposController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -134,6 +133,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\categorias.css" />
     <Content Include="Content\css\layout.css" />
     <Content Include="Content\css\login.css" />
     <Content Include="Content\img\favicon.ico" />
@@ -146,10 +146,13 @@
     <Content Include="Schema\001_Schema.sql" />
     <Content Include="Schema\002_Permisos_Categorias.sql" />
     <Content Include="Schema\002_Poblacion.sql" />
+    <Content Include="Schema\003_SP.sql" />
+    <Content Include="Schema\004_SP_Categorias_CRUD.sql" />
+    <Content Include="Schema\005_Migration_Categorias_Auditoria.sql" />
+    <Content Include="Scripts\categorias.js" />
     <Content Include="Scripts\Categorias\categorias.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\login.js" />
-    <Content Include="Scripts\zenith-spa.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -172,11 +175,10 @@
     <None Include="packages.config" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
-    <Content Include="Views\Equipos\Categorias.cshtml" />
     <Content Include="Views\Equipos\Index.cshtml" />
     <Content Include="Views\Equipos\Marcas.cshtml" />
     <Content Include="Views\Equipos\Modelos.cshtml" />
-    <Content Include="Views\Categorias\Index.cshtml" />
+    <Content Include="Views\Equipos\Categorias.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CapaComun\CapaComun.csproj">
