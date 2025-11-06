@@ -1,6 +1,6 @@
 ﻿using CapaComun;
 using CapaComun.Excepciones;
-using CapaEntidad.DTOs.Categoria;
+using CapaEntidad.DTOs.Catalogo;
 using CapaEntidad.DTOs.Common;
 using System;
 using System.Collections.Generic;
@@ -54,9 +54,14 @@ namespace CapaDatos.Categoria
                         {
                             IdCategoria = Convert.ToInt32(row["IdCategoria"]),
                             Nombre = row["Nombre"].ToString(),
-                            Descripcion = row["Descripcion"].ToString(),
+                            Descripcion = row["Descripcion"] != DBNull.Value ? row["Descripcion"].ToString() : null,
                             Activo = Convert.ToBoolean(row["Activo"]),
-                            TotalSubcategorias = Convert.ToInt32(row["TotalSubcategorias"])
+                            TotalSubcategorias = Convert.ToInt32(row["TotalSubcategorias"]),
+                            // Campos de auditoría
+                            FechaCreacion = row["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(row["FechaCreacion"]) : (DateTime?)null,
+                            UsuarioCreacion = row["UsuarioCreacion"] != DBNull.Value ? row["UsuarioCreacion"].ToString() : null,
+                            FechaModificacion = row["FechaModificacion"] != DBNull.Value ? Convert.ToDateTime(row["FechaModificacion"]) : (DateTime?)null,
+                            UsuarioModificacion = row["UsuarioModificacion"] != DBNull.Value ? row["UsuarioModificacion"].ToString() : null
                         });
                     }
                 }
@@ -94,9 +99,14 @@ namespace CapaDatos.Categoria
                     {
                         IdCategoria = Convert.ToInt32(row["IdCategoria"]),
                         Nombre = row["Nombre"].ToString(),
-                        Descripcion = row["Descripcion"].ToString(),
+                        Descripcion = row["Descripcion"] != DBNull.Value ? row["Descripcion"].ToString() : null,
                         Activo = Convert.ToBoolean(row["Activo"]),
-                        TotalSubcategorias = Convert.ToInt32(row["TotalSubcategorias"])
+                        TotalSubcategorias = Convert.ToInt32(row["TotalSubcategorias"]),
+                        // Campos de auditoría
+                        FechaCreacion = row["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(row["FechaCreacion"]) : (DateTime?)null,
+                        UsuarioCreacion = row["UsuarioCreacion"] != DBNull.Value ? row["UsuarioCreacion"].ToString() : null,
+                        FechaModificacion = row["FechaModificacion"] != DBNull.Value ? Convert.ToDateTime(row["FechaModificacion"]) : (DateTime?)null,
+                        UsuarioModificacion = row["UsuarioModificacion"] != DBNull.Value ? row["UsuarioModificacion"].ToString() : null
                     };
                 }
 

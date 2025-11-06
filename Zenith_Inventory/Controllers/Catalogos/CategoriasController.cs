@@ -1,5 +1,5 @@
 ﻿using CapaComun.Excepciones;
-using CapaEntidad.DTOs.Categoria;
+using CapaEntidad.DTOs.Catalogo;
 using CapaEntidad.DTOs.Common;
 using CapaNegocio.Categoria;
 using System;
@@ -145,7 +145,12 @@ namespace Zenith_Inventory.Controllers.Catalogos
                     nombre = categoria.Nombre,
                     descripcion = categoria.Descripcion,
                     activo = categoria.Activo,
-                    totalSubcategorias = categoria.TotalSubcategorias
+                    totalSubcategorias = categoria.TotalSubcategorias,
+                    // Información de auditoría
+                    fechaCreacion = categoria.FechaCreacion?.ToString("dd/MM/yyyy HH:mm"),
+                    usuarioCreacion = categoria.UsuarioCreacion,
+                    fechaModificacion = categoria.FechaModificacion?.ToString("dd/MM/yyyy HH:mm"),
+                    usuarioModificacion = categoria.UsuarioModificacion
                 });
             }
             catch (ValidationException ex)

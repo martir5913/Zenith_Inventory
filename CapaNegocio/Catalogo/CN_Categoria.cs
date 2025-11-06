@@ -1,7 +1,7 @@
 ﻿using CapaComun; // Agregado para acceder a CC_ContextoWeb
 using CapaComun.Excepciones;
 using CapaDatos.Categoria;
-using CapaEntidad.DTOs.Categoria;
+using CapaEntidad.DTOs.Catalogo;
 using CapaEntidad.DTOs.Common;
 using System;
 

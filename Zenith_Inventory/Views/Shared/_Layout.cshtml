@@ -55,7 +55,7 @@
                     <a href="#equiposSubmenu"
                        class="nav-link"
                        data-bs-toggle="collapse"
-                       data-controller="Equipos">
+                       data-controller="Equipos,Inventario">
                         <i class="bi bi-laptop"></i>
                         <span class="nav-text">Equipos</span>
                         <i class="bi bi-chevron-down arrow-icon"></i>
@@ -139,7 +139,7 @@
                     <a href="#catalogosSubmenu"
                        class="nav-link"
                        data-bs-toggle="collapse"
-                       data-controller="Equipos">
+                       data-controller="Categorias,SubCategorias,Equipos">
                         <i class="bi bi-tags"></i>
                         <span class="nav-text">Catálogos</span>
                         <i class="bi bi-chevron-down arrow-icon"></i>
@@ -148,14 +148,14 @@
                         <li>
                             <a href="@Url.Action("Index", "Categorias")"
                                class="submenu-link"
-                               data-controller="Equipos"
-                               data-action="Categorias">Categorías</a>
+                               data-controller="Categorias"
+                               data-action="Index">Categorías</a>
                         </li>
                         <li>
                             <a href="@Url.Action("Index", "SubCategorias")"
                                class="submenu-link"
-                               data-controller="Equipos"
-                               data-action="Subcategorias">Subcategorías</a>
+                               data-controller="SubCategorias"
+                               data-action="Index">Subcategorías</a>
                         </li>
                         <li>
                             <a href="@Url.Action("Marcas", "Equipos")"
@@ -396,16 +396,13 @@
     <!-- Pass server context to JavaScript -->
     <script>
         window.zenithContext = {
- controller: '@ViewContext.RouteData.Values["controller"]',
-       action: '@ViewContext.RouteData.Values["action"]'
+            controller: '@ViewContext.RouteData.Values["controller"]',
+            action: '@ViewContext.RouteData.Values["action"]'
         };
         console.log('Zenith Context:', window.zenithContext);
     </script>
 
-    <script src="~/Scripts/layout.js"></script>
-
-    <!-- Zenith SPA Navigation System -->
-    <!-- <script src="~/Scripts/zenith-spa.js"></script> -->
+    <script src="~/Scripts/layout.js"></script> 
 
     @RenderSection("scripts", required: false)
 </body>

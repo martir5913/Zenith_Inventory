@@ -31,8 +31,8 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Activo</th>
-                        <th>Subcategorías</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Subcategorías</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="categoriesBody">
@@ -47,30 +47,44 @@
     </div>
 </div>
 
-<!-- Modal for Add/Edit Category -->
+<!-- Modal for Add/Edit Category - Diseño Moderno -->
 <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="categoryModalLabel">
-                    <i class="fas fa-plus me-2"></i>Agregar Categoría
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Header con diseño moderno -->
+            <div class="modal-header detail-modal-header">
+                <div class="d-flex align-items-center w-100">
+                    <div class="detail-icon-box me-3">
+                        <i class="fas fa-plus" id="categoryModalIcon"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="modal-title" id="categoryModalLabel">
+                            Agregar Categoría
+                        </h5>
+                        <small class="detail-subtitle-header">Complete la información requerida</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
+            
             <div class="modal-body">
                 <form id="categoryForm">
-                    <div class="form-group">
-                        <label for="categoryName">
+                    <div class="form-group mb-3">
+                        <label for="categoryName" class="form-label">
                             <i class="fas fa-tag text-primary me-1"></i>Nombre <span class="text-danger">*</span>
                         </label>
                         <input type="text" id="categoryName" class="form-control" placeholder="Ingrese el nombre de la categoría" required />
                     </div>
-                    <div class="form-group">
-                        <label for="categoryDescription">
+                    
+                    <div class="form-group mb-3">
+                        <label for="categoryDescription" class="form-label">
                             <i class="fas fa-align-left text-primary me-1"></i>Descripción
                         </label>
                         <textarea id="categoryDescription" class="form-control" rows="3" placeholder="Ingrese una descripción opcional"></textarea>
                     </div>
+                    
                     <div class="form-check">
                         <input type="checkbox" id="categoryActive" class="form-check-input" checked />
                         <label class="form-check-label" for="categoryActive">
@@ -79,7 +93,8 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            
+            <div class="modal-footer border-0 bg-light">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i>Cancelar
                 </button>
@@ -91,72 +106,108 @@
     </div>
 </div>
 
-<!-- Modal for View Category Details -->
+<!-- Modal for View Category Details - Diseño Optimizado -->
 <div class="modal fade" id="viewCategoryModal" tabindex="-1" aria-labelledby="viewCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewCategoryModalLabel">
-                    <i class="fas fa-eye me-2"></i>Detalles de Categoría
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Header con mejor contraste -->
+            <div class="modal-header detail-modal-header">
+                <div class="d-flex align-items-center w-100">
+                    <div class="detail-icon-box me-3">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="modal-title mb-0" id="viewCategoryModalLabel">
+                            Detalles de Categoría
+                        </h5>
+                        <small class="detail-subtitle-header">Información del registro</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-hashtag text-primary me-2"></i>
-                                    <strong>ID:</strong>
+            
+            <div class="modal-body p-0">
+                <!-- Sección Principal con Información Clave -->
+                <div class="detail-main-info">
+                    <div class="row g-0">
+                        <div class="col-8">
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <label class="detail-field-label">
+                                        <i class="fas fa-tag me-2"></i>Nombre
+                                    </label>
+                                    <h4 class="detail-field-value" id="viewCategoryName">--</h4>
                                 </div>
-                                <p class="mb-0" id="viewCategoryId"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-tag text-primary me-2"></i>
-                                    <strong>Nombre:</strong>
-                                </div>
-                                <p class="mb-0" id="viewCategoryName"></p>
                             </div>
                         </div>
-                        <hr>
-                        <div class="mb-3">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-align-left text-primary me-2"></i>
-                                <strong>Descripción:</strong>
+                        <div class="col-4">
+                            <div class="detail-status-section">
+                                <label class="detail-field-label text-center d-block mb-2">
+                                    <i class="fas fa-info-circle me-1"></i>Estado
+                                </label>
+                                <span id="viewCategoryActive" class="status-badge-large d-block mb-2" data-active="">--</span>
+                                <small class="detail-id-text">ID: <strong id="viewCategoryId">--</strong></small>
                             </div>
-                            <p class="mb-0" id="viewCategoryDescription"></p>
                         </div>
-                        <hr>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-toggle-on text-primary me-2"></i>
-                                    <strong>Estado:</strong>
+                    </div>
+                </div>
+
+                <!-- Sección de Descripción -->
+                <div class="detail-description-section">
+                    <div class="detail-section-header">
+                        <i class="fas fa-align-left me-2"></i>
+                        <span>Descripción</span>
+                    </div>
+                    <div class="detail-section-body">
+                        <p class="detail-description-text" id="viewCategoryDescription">
+                            Sin descripción disponible
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Información Adicional en Cards Compactas -->
+                <div class="detail-stats-section">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-layer-group"></i>
                                 </div>
-                                <span id="viewCategoryActive" class="badge" data-active=""></span>
+                                <div class="stat-content">
+                                    <span class="stat-label">Subcategorías</span>
+                                    <span class="stat-value" id="viewCategorySubcategories">0</span>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-list text-primary me-2"></i>
-                                    <strong>Total Subcategorías:</strong>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-user-plus"></i>
                                 </div>
-                                <p class="mb-0" id="viewCategorySubcategories"></p>
+                                <div class="stat-content">
+                                    <span class="stat-label">Creado por</span>
+                                    <span class="stat-creator" id="viewCategoryCreator">Sistema</span>
+                                    <span class="stat-date" id="viewCategoryCreationDate">--/--/----</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+
+            <div class="modal-footer border-0 bg-light">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i>Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnEditCategoryFromView">
+                    <i class="fas fa-edit me-1"></i>Editar
                 </button>
             </div>
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     <script src="~/Scripts/Catalogos/categorias.js"></script>

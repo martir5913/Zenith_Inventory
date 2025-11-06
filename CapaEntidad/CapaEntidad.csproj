@@ -41,12 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalogo\CE_Categoria.cs" />
+    <Compile Include="Catalogo\CE_SubCategoria.cs" />
     <Compile Include="CE_Configuracion.cs" />
     <Compile Include="CE_Permiso.cs" />
     <Compile Include="CE_Rol.cs" />
-    <Compile Include="DTOs\Categoria\CE_CategoriaCreateDTO.cs" />
-    <Compile Include="DTOs\Categoria\CE_CategoriaListDTO.cs" />
-    <Compile Include="DTOs\Categoria\CE_CategoriaUpdateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_CategoriaCreateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_CategoriaListDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_CategoriaUpdateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_SubCategoriaListDTO.cs" />
     <Compile Include="DTOs\CE_EncryptionConfig.cs" />
     <Compile Include="DTOs\CE_LoginRequest.cs" />
     <Compile Include="DTOs\CE_LoginResponse.cs" />

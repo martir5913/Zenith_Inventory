@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Categoria\CN_Categoria.cs" />
+    <Compile Include="Catalogo\CN_Categoria.cs" />
+    <Compile Include="Catalogo\CN_SubCategoria.cs" />
     <Compile Include="CN_Autenticacion.cs" />
     <Compile Include="CN_DesarrolloHelper.cs" />
     <Compile Include="CN_Usuario.cs" />

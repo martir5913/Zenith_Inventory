@@ -16,6 +16,7 @@ $(document).ready(function () {
     $('#btnAddCategory').click(function () {
         resetModal();
         $('#categoryModalLabel').text('Agregar Categoría');
+        $('#categoryModalIcon').removeClass('fa-edit').addClass('fa-plus');
         $('#categoryModal').modal('show');
         isEditMode = false;
     });
@@ -69,7 +70,7 @@ function loadCategories() {
     });
 }
 
-function populateCategoriesTable(categories) {
+function populateCategoriesTable(categories = []) {
     var tbody = $('#categoriesBody');
     tbody.empty();
 
@@ -177,6 +178,7 @@ function loadCategoryDetails(categoryId) {
                 $('#categoryDescription').val(category.descripcion);
                 $('#categoryActive').prop('checked', category.activo);
                 $('#categoryModalLabel').text('Editar Categoría');
+                $('#categoryModalIcon').removeClass('fa-plus').addClass('fa-edit');
                 $('#categoryModal').modal('show');
                 isEditMode = true;
                 editCategoryId = categoryId;
@@ -230,13 +232,38 @@ function viewCategoryDetails(categoryId) {
         success: function (response) {
             if (response.success) {
                 var category = response.data;
+                
+                // Información principal
                 $('#viewCategoryId').text(category.id);
                 $('#viewCategoryName').text(category.nombre);
-                $('#viewCategoryDescription').text(category.descripcion || 'N/A');
+                $('#viewCategoryDescription').text(category.descripcion || 'Sin descripción disponible');
+                
+                // Badge de estado con clases Bootstrap
                 var activeElement = $('#viewCategoryActive');
-                activeElement.text(category.activo ? 'Activo' : 'Inactivo');
-                activeElement.attr('data-active', category.activo);
-                $('#viewCategorySubcategories').text(category.totalSubcategorias);
+                if (category.activo) {
+                    activeElement.text('Activo');
+                    activeElement.removeClass('bg-secondary').addClass('bg-success');
+                } else {
+                    activeElement.text('Inactivo');
+                    activeElement.removeClass('bg-success').addClass('bg-secondary');
+                }
+                
+                // Estadísticas
+                $('#viewCategorySubcategories').text(category.totalSubcategorias || '0');
+                
+                // Información de Registro (quien creó y cuándo)
+                $('#viewCategoryCreator').text(category.usuarioCreacion || 'Sistema');
+                $('#viewCategoryCreationDate').text(category.fechaCreacion || '--/--/----');
+                
+                // Configurar botón de editar desde el modal de vista
+                $('#btnEditCategoryFromView').off('click').on('click', function() {
+                    $('#viewCategoryModal').modal('hide');
+                    setTimeout(function() {
+                        loadCategoryDetails(categoryId);
+                    }, 300);
+                });
+                
+                // Mostrar el modal
                 $('#viewCategoryModal').modal('show');
             } else {
                 toastr.error(response.message, 'Error');

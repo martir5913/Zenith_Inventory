@@ -141,6 +141,7 @@
     <Content Include="Content\img\favicon.ico" />
     <Content Include="Content\img\login-hero-bg.jpg" />
     <Content Include="Content\img\Logo_zenith_sin_fondo.png" />
+    <Content Include="Content\subcategorias.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\Site.css" />
@@ -151,7 +152,9 @@
     <Content Include="Schema\003_SP.sql" />
     <Content Include="Schema\004_SP_Categorias_CRUD.sql" />
     <Content Include="Schema\005_Migration_Categorias_Auditoria.sql" />
+    <Content Include="Schema\005_SP_Subcategorias_CRUD.sql" />
     <Content Include="Scripts\Catalogos\categorias.js" />
+    <Content Include="Scripts\Catalogos\subcategorias.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\login.js" />
     <Content Include="Web.config" />

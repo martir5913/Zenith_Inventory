@@ -1,6 +1,6 @@
 using System;
 
-namespace CapaEntidad.DTOs.Categoria
+namespace CapaEntidad.DTOs.Catalogo
 {
     /// <summary>
     /// DTO para actualizar una categoría existente

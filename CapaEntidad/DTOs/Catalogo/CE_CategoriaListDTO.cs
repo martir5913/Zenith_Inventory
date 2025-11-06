@@ -1,4 +1,6 @@
-namespace CapaEntidad.DTOs.Categoria
+using System;
+
+namespace CapaEntidad.DTOs.Catalogo
 {
     /// <summary>
     /// DTO para listado de categorías (vista simplificada)
@@ -10,5 +12,11 @@ namespace CapaEntidad.DTOs.Categoria
         public string Descripcion { get; set; }
         public bool Activo { get; set; }
         public int TotalSubcategorias { get; set; }
+
+        // Campos de Auditoría
+        public DateTime? FechaCreacion { get; set; }
+        public string UsuarioCreacion { get; set; }
+        public DateTime? FechaModificacion { get; set; }
+        public string UsuarioModificacion { get; set; }
     }
 }
