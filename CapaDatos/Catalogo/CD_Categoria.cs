@@ -147,7 +147,7 @@ namespace CapaDatos.Categoria
             }
         }
 
-        public void ActualizarCategoria(CE_CategoriaUpdateDTO categoria, string usuarioModificacion, string ipModificacion)
+        public int ActualizarCategoria(CE_CategoriaUpdateDTO categoria, string usuarioModificacion, string ipModificacion)
         {
             try
             {
@@ -158,10 +158,21 @@ namespace CapaDatos.Categoria
                     CC_Conexion.CrearParametro("@Descripcion", categoria.Descripcion, SqlDbType.NVarChar, 500),
                     CC_Conexion.CrearParametro("@Activo", categoria.Activo, SqlDbType.Bit),
                     CC_Conexion.CrearParametro("@UsuarioModificacion", usuarioModificacion, SqlDbType.NVarChar, 100),
-                    CC_Conexion.CrearParametro("@IpModificacion", ipModificacion, SqlDbType.NVarChar, 45)
+                    CC_Conexion.CrearParametro("@IpModificacion", ipModificacion, SqlDbType.NVarChar, 45),
+                    new SqlParameter("@FilasAfectadas", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    }
                 };
 
                 _conexion.EjecutarProcedimientoSinResultado("ZI_GENERAL.SP_CATEGORIAS_ACTUALIZAR", parametros);
+                
+                // Obtener filas afectadas del parámetro OUTPUT
+                int filasAfectadas = parametros[6].Value != DBNull.Value
+                    ? Convert.ToInt32(parametros[6].Value)
+                    : 0;
+                
+                return filasAfectadas;
             }
             catch (Exception ex)
             {
@@ -170,7 +181,7 @@ namespace CapaDatos.Categoria
             }
         }
 
-        public void EliminarCategoria(int idCategoria, string usuarioEliminacion, string ipEliminacion)
+        public int EliminarCategoria(int idCategoria, string usuarioEliminacion, string ipEliminacion)
         {
             try
             {
@@ -178,10 +189,21 @@ namespace CapaDatos.Categoria
                 {
                     CC_Conexion.CrearParametro("@IdCategoria", idCategoria, SqlDbType.Int),
                     CC_Conexion.CrearParametro("@UsuarioEliminacion", usuarioEliminacion, SqlDbType.NVarChar, 100),
-                    CC_Conexion.CrearParametro("@IpEliminacion", ipEliminacion, SqlDbType.NVarChar, 45)
+                    CC_Conexion.CrearParametro("@IpEliminacion", ipEliminacion, SqlDbType.NVarChar, 45),
+                    new SqlParameter("@FilasAfectadas", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    }
                 };
 
                 _conexion.EjecutarProcedimientoSinResultado("ZI_GENERAL.SP_CATEGORIAS_ELIMINAR", parametros);
+                
+                // Obtener filas afectadas del parámetro OUTPUT
+                int filasAfectadas = parametros[3].Value != DBNull.Value
+                    ? Convert.ToInt32(parametros[3].Value)
+                    : 0;
+                
+                return filasAfectadas;
             }
             catch (Exception ex)
             {

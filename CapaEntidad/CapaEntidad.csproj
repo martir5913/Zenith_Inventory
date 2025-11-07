@@ -49,7 +49,15 @@
     <Compile Include="DTOs\Catalogo\CE_CategoriaCreateDTO.cs" />
     <Compile Include="DTOs\Catalogo\CE_CategoriaListDTO.cs" />
     <Compile Include="DTOs\Catalogo\CE_CategoriaUpdateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_MarcaCreateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_MarcaListDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_MarcaUpdateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_ModeloCreateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_ModeloListDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_ModeloUpdateDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_SubCategoriaCreateDTO.cs" />
     <Compile Include="DTOs\Catalogo\CE_SubCategoriaListDTO.cs" />
+    <Compile Include="DTOs\Catalogo\CE_SubCategoriaUpdateDTO.cs" />
     <Compile Include="DTOs\CE_EncryptionConfig.cs" />
     <Compile Include="DTOs\CE_LoginRequest.cs" />
     <Compile Include="DTOs\CE_LoginResponse.cs" />

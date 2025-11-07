@@ -84,5 +84,98 @@ namespace Zenith_Inventory.Controllers.Catalogos
                 return JsonError("Error al obtener la Subcategoria", ex.Message);
             }
         }
+        [HttpPost]
+        [PermissionFilter("SUB_CATEGORIAS", "ACTUALIZAR")]
+        public JsonResult UpdateSubCategoria(int id, string nombre, int idCategoria, string descripcion, bool activo)
+        {
+            try
+            {
+                var objSubCategoria = new CE_SubCategoriaUpdateDTO
+                {
+                    IdSubCate = id,
+                    IdCategoria = idCategoria,
+                    Nombre = nombre,
+                    Descripcion = descripcion,
+                    activo = activo
+                };
+
+                objSubCategoria.usuarioModificacion = ObtenerUsernameSesion();
+
+                bool resultado = _negocioSubCategoria.ActualizarSubCat(objSubCategoria);
+
+                if (resultado)
+                {
+                    return JsonSuccess("SubCategoría actualizada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo actualizar la Subcategoría", "La operación no se completó");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al actualizar Subcategoría", ex.Message);
+            }
+        }
+        [HttpPost]
+        [PermissionFilter("SUB_CATEGORIAS", "ELIMINAR")]
+        public JsonResult DeleteSubCategoria(int id)
+        {
+            try
+            {
+                string usuarioEliminacion = ObtenerUsernameSesion();
+                bool resultado = _negocioSubCategoria.BorrarSubCat(id, usuarioEliminacion);
+
+                if (resultado)
+                {
+                    return JsonSuccess("SubCategoría eliminada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo eliminar la Subcategoría", "La operación no se completó");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al eliminar categoría", ex.Message);
+            }
+        }
+        [HttpPost]
+        [PermissionFilter("SUB_CATEGORIAS", "CREAR")]
+        public JsonResult CreateSubcategoria(string nombre, int idCat, string descripcion, bool activo = true)
+        {
+            try
+            {
+                var subcategoria = new CE_SubCategoriaCreateDTO
+                {
+                    Nombre = nombre,
+                    IdCategoria = idCat,
+                    Descripcion = descripcion,
+                    Activo = activo
+                };
+
+                subcategoria.UsuarioCreacion = ObtenerUsernameSesion();
+
+                int idCategoria = _negocioSubCategoria.CrearSubCat(subcategoria);
+
+                return JsonSuccess("SubCategoría creada exitosamente", new { idCategoria });
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError($"Error al crear Subcategoría {ex.Message}", ex.Message);
+            }
+        }
     }
 }

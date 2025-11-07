@@ -96,9 +96,16 @@ namespace Zenith_Inventory.Controllers.Catalogos
                 };
 
                 string usuarioModificacion = ObtenerUsernameSesion();
-                _negocioCategoria.ActualizarCategoria(categoriaDTO, usuarioModificacion);
+                bool resultado = _negocioCategoria.ActualizarCategoria(categoriaDTO, usuarioModificacion);
 
-                return JsonSuccess("Categoría actualizada exitosamente");
+                if (resultado)
+                {
+                    return JsonSuccess("Categoría actualizada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo actualizar la categoría", "La operación no se completó");
+                }
             }
             catch (ValidationException ex)
             {
@@ -117,9 +124,16 @@ namespace Zenith_Inventory.Controllers.Catalogos
             try
             {
                 string usuarioEliminacion = ObtenerUsernameSesion();
-                _negocioCategoria.EliminarCategoria(id, usuarioEliminacion);
+                bool resultado = _negocioCategoria.EliminarCategoria(id, usuarioEliminacion);
 
-                return JsonSuccess("Categoría eliminada exitosamente");
+                if (resultado)
+                {
+                    return JsonSuccess("Categoría eliminada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo eliminar la categoría", "La operación no se completó");
+                }
             }
             catch (ValidationException ex)
             {

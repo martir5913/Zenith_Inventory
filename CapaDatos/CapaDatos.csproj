@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Catalogo\CD_Categoria.cs" />
+    <Compile Include="Catalogo\CD_Marca.cs" />
     <Compile Include="Catalogo\CD_SubCategoria.cs" />
     <Compile Include="CD_Configuracion.cs" />
     <Compile Include="CD_Usuario.cs" />

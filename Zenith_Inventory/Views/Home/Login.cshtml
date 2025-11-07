@@ -8,8 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Zenith</title>
-    <link rel="stylesheet" href="~/Content/css/login.css">
     <link rel="icon" type="image/x-icon" href="~/Content/img/favicon.ico">
+    
+    @* Bundle de estilos de login - Minifica automáticamente en producción *@
+    @Styles.Render("~/Content/login")
 </head>
 <body>
     <div class="wrapper">
@@ -77,6 +79,7 @@
         </form>
     </div>
 
-    <script src="~/Scripts/login.js"></script>
+    @* Bundle de JavaScript de login - Minifica automáticamente en producción *@
+    @Scripts.Render("~/bundles/login")
 </body>
 </html>

@@ -5,8 +5,17 @@ var isEditMode = false;
 var editCategoryId = null;
 
 $(document).ready(function () {
-    loadCategories();
+    // OPTIMIZACIÓN: Medir tiempo de carga inicial
+    console.time('Carga Inicial Categorías');
+    
+    loadCategories().then(() => {
+        console.timeEnd('Carga Inicial Categorías');
+        console.log('✅ Categorías cargadas exitosamente');
+    }).catch(error => {
+        console.error('❌ Error al cargar categorías:', error);
+    });
 
+    // Event Handlers
     $('#searchInput').on('input', function () {
         searchTerm = $(this).val().trim();
         currentPage = 1;
@@ -48,25 +57,33 @@ $(document).ready(function () {
 });
 
 function loadCategories() {
-    $.ajax({
-        url: '/Categorias/GetCategorias',
-        type: 'GET',
-        data: {
-            page: currentPage,
-            pageSize: pageSize,
-            search: searchTerm
-        },
-        success: function (response) {
-            if (response.success) {
-                populateCategoriesTable(response.data.items);
-                populatePagination(response.data.pagination);
-            } else {
-                toastr.error(response.message, 'Error');
+    console.time('loadCategories');
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Categorias/GetCategorias',
+            type: 'GET',
+            data: {
+                page: currentPage,
+                pageSize: pageSize,
+                search: searchTerm
+            },
+            success: function (response) {
+                console.timeEnd('loadCategories');
+                if (response.success) {
+                    populateCategoriesTable(response.data.items);
+                    populatePagination(response.data.pagination);
+                    resolve(response);
+                } else {
+                    toastr.error(response.message, 'Error');
+                    reject(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.timeEnd('loadCategories');
+                toastr.error('Error al cargar las categorías.', 'Error');
+                reject(error);
             }
-        },
-        error: function () {
-            toastr.error('Error al cargar las categorías.', 'Error');
-        }
+        });
     });
 }
 
@@ -95,8 +112,21 @@ function populateCategoriesTable(categories = []) {
         tbody.append(row);
     });
 
-    // Initialize tooltips for new buttons
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    // OPTIMIZACIÓN: Lazy loading de tooltips
+    initializeLazyTooltips();
+}
+
+// OPTIMIZACIÓN: Inicializar tooltips solo al hacer hover
+function initializeLazyTooltips() {
+    $('[data-bs-toggle="tooltip"]').off('mouseenter.tooltip').on('mouseenter.tooltip', function() {
+        const $this = $(this);
+        if (!$this.data('bs.tooltip')) {
+            $this.tooltip({
+                trigger: 'hover'
+            });
+            $this.tooltip('show');
+        }
+    });
 }
 
 function populatePagination(pagination) {
@@ -155,6 +185,11 @@ function saveCategory() {
                 $('#categoryModal').modal('hide');
                 loadCategories();
                 toastr.success(response.message, 'Éxito');
+                
+                // OPTIMIZACIÓN: Invalidar caché de categorías en subcategorías
+                if (typeof invalidateCategoriesCache === 'function') {
+                    invalidateCategoriesCache();
+                }
             } else {
                 toastr.error(response.message, 'Error');
             }
@@ -212,6 +247,11 @@ function deleteCategory(categoryId) {
                     if (response.success) {
                         loadCategories();
                         toastr.success(response.message, 'Éxito');
+                        
+                        // OPTIMIZACIÓN: Invalidar caché de categorías
+                        if (typeof invalidateCategoriesCache === 'function') {
+                            invalidateCategoriesCache();
+                        }
                     } else {
                         toastr.error(response.message, 'Error');
                     }

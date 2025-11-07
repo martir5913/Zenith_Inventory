@@ -3,7 +3,8 @@
 }
 
 @section Styles {
-    <link href="~/Content/categorias.css" rel="stylesheet" />
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Styles.Render("~/Content/catalogos/categorias")
 }
 
 <div class="container-fluid px-4">
@@ -210,5 +211,6 @@
 </div>
 
 @section Scripts {
-    <script src="~/Scripts/Catalogos/categorias.js"></script>
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Scripts.Render("~/bundles/catalogos/categorias")
 }

@@ -2,6 +2,11 @@
     ViewBag.Title = "Gestión de Equipos";
 }
 
+@section Styles {
+    @* Bundle de estilos de equipos - Minifica automáticamente en producción *@
+    @Styles.Render("~/Content/equipos")
+}
+
 <!-- Page Header -->
 <div class="row mb-4">
     <div class="col-12">
@@ -112,14 +117,11 @@
                         Por el momento, puedes gestionar:
                     </p>
                     <div class="d-flex gap-2 justify-content-center">
-                        <a href="@Url.Action("Categorias", "Equipos")" class="btn btn-outline-primary">
+                        <a href="@Url.Action("Index", "Categorias")" class="btn btn-outline-primary">
                             <i class="bi bi-tag"></i> Categorías
                         </a>
-                        <a href="@Url.Action("Marcas", "Equipos")" class="btn btn-outline-primary">
-                            <i class="bi bi-award"></i> Marcas
-                        </a>
-                        <a href="@Url.Action("Modelos", "Equipos")" class="btn btn-outline-primary">
-                            <i class="bi bi-box"></i> Modelos
+                        <a href="@Url.Action("Index", "SubCategorias")" class="btn btn-outline-primary">
+                            <i class="bi bi-tags"></i> Subcategorías
                         </a>
                     </div>
                 </div>
@@ -127,25 +129,3 @@
         </div>
     </div>
 </div>
-
-@section scripts {
-    <style>
-        .icon-box {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-        }
-
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-            }
-    </style>
-}

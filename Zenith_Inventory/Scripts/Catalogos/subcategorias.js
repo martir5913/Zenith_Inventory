@@ -6,11 +6,42 @@ let filterStatus = '';
 let isEditMode = false;
 let editSubcategoryId = null;
 
-$(document).ready(function () {
-    loadCategoriesForSelect();
-    loadCategoriesForFilter();
-    loadSubcategories();
+// OPTIMIZACIÓN: Caché de categorías
+let cachedCategories = null;
+const CACHE_KEY = 'zenith_categories';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
+// OPTIMIZACIÓN: Configuración centralizada de Select2
+const select2DefaultConfig = {
+    placeholder: 'Seleccione una categoría',
+    allowClear: true,
+    width: '100%',
+    language: {
+        noResults: function() {
+            return "No se encontraron resultados";
+        },
+        searching: function() {
+            return "Buscando...";
+        }
+    }
+};
+
+$(document).ready(function () {
+    // OPTIMIZACIÓN: Cargar datos en paralelo usando Promise.all
+    console.time('Carga Inicial Total');
+    
+    Promise.all([
+        loadCategoriesOnce(),    // Una sola carga de categorías
+        loadSubcategories()      // Cargar subcategorías en paralelo
+    ]).then(() => {
+        console.timeEnd('Carga Inicial Total');
+        console.log('✅ Datos iniciales cargados exitosamente');
+    }).catch(error => {
+        console.error('❌ Error al cargar datos iniciales:', error);
+        toastr.error('Error al cargar los datos iniciales.', 'Error');
+    });
+
+    // Event Handlers
     $('#searchInput').on('input', function () {
         searchTerm = $(this).val().trim();
         currentPage = 1;
@@ -38,18 +69,9 @@ $(document).ready(function () {
         
         // Inicializar Select2 cuando se abre el modal
         setTimeout(function() {
-            const select = $('#subcategoryCategory');
-            if (!select.hasClass('select2-hidden-accessible')) {
-                if (typeof select.select2 === 'function') {
-                    select.select2({
-                        placeholder: 'Seleccione una categoría',
-                        allowClear: true,
-                        width: '100%',
-                        dropdownParent: $('#subcategoryModal')
-                    });
-                    console.log('Select2 initialized in modal');
-                }
-            }
+            initializeSelect2('#subcategoryCategory', {
+                dropdownParent: $('#subcategoryModal')
+            });
         }, 100);
     });
 
@@ -79,39 +101,147 @@ $(document).ready(function () {
     });
 });
 
-function loadCategoriesForSelect() {
-    console.log('Loading categories for select...');
-    $.ajax({
-        url: '/Categorias/GetCategorias',
-        type: 'GET',
-        data: {
-            page: 1,
-            pageSize: 100,
-            search: ''
-        },
-        success: function (response) {
-            console.log('Categories response:', response);
-            if (response.success) {
-                const select = $('#subcategoryCategory');
-                select.empty();
-                select.append('<option value="">Seleccione una categoría</option>');
-                response.data.items.forEach(function (data) {
-                    console.log('Appending option:', data.IdCategoria, data.Nombre);
-                    select.append('<option value="' + data.IdCategoria + '">' + escapeHtml(data.Nombre) + '</option>');
-                });
-                console.log('All options appended, total options:', select.find('option').length);
-                // Select2 will be initialized when modal opens
-                console.log('Select options loaded, ready for Select2');
+// OPTIMIZACIÓN: Función centralizada para inicializar Select2
+function initializeSelect2(selector, additionalOptions = {}) {
+    const $element = $(selector);
+    
+    // Destruir instancia existente si existe
+    if ($element.hasClass('select2-hidden-accessible')) {
+        $element.select2('destroy');
+    }
+    
+    // Combinar configuración por defecto con opciones adicionales
+    const config = { ...select2DefaultConfig, ...additionalOptions };
+    
+    // Inicializar Select2
+    if (typeof $element.select2 === 'function') {
+        $element.select2(config);
+        return true;
+    } else {
+        console.error('Select2 no está disponible');
+        return false;
+    }
+}
+
+// OPTIMIZACIÓN: Funciones de caché localStorage
+function getCachedCategories() {
+    try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            const {data, timestamp} = JSON.parse(cached);
+            if (Date.now() - timestamp < CACHE_DURATION) {
+                console.log('✅ Usando categorías desde caché');
+                return data;
             } else {
-                console.error('Error in response:', response.message);
-                toastr.error(response.message, 'Error');
+                console.log('⏰ Caché expirado, recargando...');
+                localStorage.removeItem(CACHE_KEY);
             }
-        },
-        error: function (xhr, status, error) {
-            console.error('AJAX error:', xhr, status, error);
-            toastr.error('Error al cargar las categorías.', 'Error');
         }
+    } catch (error) {
+        console.error('Error al leer caché:', error);
+        localStorage.removeItem(CACHE_KEY);
+    }
+    return null;
+}
+
+function setCachedCategories(data) {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            data: data,
+            timestamp: Date.now()
+        }));
+        console.log('✅ Categorías guardadas en caché');
+    } catch (error) {
+        console.error('Error al guardar en caché:', error);
+    }
+}
+
+function invalidateCategoriesCache() {
+    localStorage.removeItem(CACHE_KEY);
+    cachedCategories = null;
+    console.log('🗑️ Caché de categorías invalidado');
+}
+
+// OPTIMIZACIÓN: Cargar categorías una sola vez (eliminando duplicación)
+function loadCategoriesOnce() {
+    console.time('loadCategoriesOnce');
+    
+    return new Promise((resolve, reject) => {
+        // Verificar caché en memoria
+        if (cachedCategories) {
+            console.log('✅ Usando categorías desde memoria');
+            populateCategorySelects(cachedCategories);
+            console.timeEnd('loadCategoriesOnce');
+            resolve(cachedCategories);
+            return;
+        }
+        
+        // Verificar caché localStorage
+        const cached = getCachedCategories();
+        if (cached) {
+            cachedCategories = cached;
+            populateCategorySelects(cachedCategories);
+            console.timeEnd('loadCategoriesOnce');
+            resolve(cachedCategories);
+            return;
+        }
+        
+        // Si no hay caché, cargar desde servidor
+        console.log('🌐 Cargando categorías desde servidor...');
+        $.ajax({
+            url: '/Categorias/GetCategorias',
+            type: 'GET',
+            data: {
+                page: 1,
+                pageSize: 100,
+                search: ''
+            },
+            success: function (response) {
+                console.timeEnd('loadCategoriesOnce');
+                if (response.success) {
+                    cachedCategories = response.data.items;
+                    setCachedCategories(cachedCategories);
+                    populateCategorySelects(cachedCategories);
+                    resolve(cachedCategories);
+                } else {
+                    console.error('Error en respuesta:', response.message);
+                    toastr.error(response.message, 'Error');
+                    reject(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.timeEnd('loadCategoriesOnce');
+                console.error('AJAX error:', xhr, status, error);
+                toastr.error('Error al cargar las categorías.', 'Error');
+                reject(error);
+            }
+        });
     });
+}
+
+// OPTIMIZACIÓN: Poblar ambos selects con las mismas categorías
+function populateCategorySelects(categories) {
+    // Poblar select del modal
+    const modalSelect = $('#subcategoryCategory');
+    modalSelect.empty();
+    modalSelect.append('<option value="">Seleccione una categoría</option>');
+    
+    // Poblar select del filtro
+    const filterSelect = $('#filterCategory');
+    filterSelect.empty();
+    filterSelect.append('<option value="">Todas las categorías</option>');
+    
+    // Agregar opciones a ambos selects
+    categories.forEach(function (category) {
+        const option = '<option value="' + category.IdCategoria + '">' + escapeHtml(category.Nombre) + '</option>';
+        modalSelect.append(option);
+        filterSelect.append(option);
+    });
+    
+    // Inicializar Select2 en el filtro
+    initializeSelect2('#filterCategory');
+    
+    console.log(`✅ ${categories.length} categorías cargadas en ambos selects`);
 }
 
 function detalleSubCategoria(idSubCat) {
@@ -139,7 +269,7 @@ function detalleSubCategoria(idSubCat) {
                     activeElement.removeClass('bg-success').addClass('bg-secondary');
                 }
                 
-                // Estadísticas
+                // Estadísticas - CORRECCIÓN: totalModelos en lugar de totalMarcas
                 $('#viewSubcategoryModelsCount').text(data.totalModelos || '0');
                 
                 // Información de Registro (quien creó y cuándo)
@@ -168,72 +298,36 @@ function detalleSubCategoria(idSubCat) {
     });
 }
 
-function loadCategoriesForFilter() {
-    console.log('Loading categories for filter...');
-    $.ajax({
-        url: '/Categorias/GetCategorias',
-        type: 'GET',
-        data: {
-            page: 1,
-            pageSize: 100,
-            search: ''
-        },
-        success: function (response) {
-            console.log('Filter categories response:', response);
-            if (response.success) {
-                const select = $('#filterCategory');
-                select.empty();
-                select.append('<option value="">Todas las categorías</option>');
-                response.data.items.forEach(function (category) {
-                    select.append('<option value="' + category.IdCategoria + '">' + escapeHtml(category.Nombre) + '</option>');
-                });
-                console.log('Filter select populated');
-                
-                // Initialize Select2 for filter
-                if (typeof select.select2 === 'function') {
-                    select.select2({
-                        placeholder: 'Todas las categorías',
-                        allowClear: true,
-                        width: '100%'
-                    });
-                    console.log('Filter Select2 initialized');
-                } else {
-                    console.error('Select2 not loaded for filter');
-                }
-            } else {
-                console.error('Error in filter response:', response.message);
-                toastr.error(response.message, 'Error');
-            }
-        },
-        error: function () {
-            console.error('AJAX error for filter');
-            toastr.error('Error al cargar las categorías para filtro.', 'Error');
-        }
-    });
-}
-
 function loadSubcategories() {
-    $.ajax({
-        url: '/SubCategorias/GetSubcategorias',
-        type: 'GET',
-        data: {
-            page: currentPage,
-            pageSize: pageSize,
-            search: searchTerm,
-            idCategoria: filterCategoryId,
-           activo: filterStatus
-        },
-        success: function (response) {
-            if (response.success) {
-                populateSubcategoriesTable(response.data.items);
-                populatePagination(response.data.pagination);
-            } else {
-                toastr.error(response.message, 'Error');
+    console.time('loadSubcategories');
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/SubCategorias/GetSubcategorias',
+            type: 'GET',
+            data: {
+                page: currentPage,
+                pageSize: pageSize,
+                search: searchTerm,
+                idCategoria: filterCategoryId,
+                activo: filterStatus
+            },
+            success: function (response) {
+                console.timeEnd('loadSubcategories');
+                if (response.success) {
+                    populateSubcategoriesTable(response.data.items);
+                    populatePagination(response.data.pagination);
+                    resolve(response);
+                } else {
+                    toastr.error(response.message, 'Error');
+                    reject(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.timeEnd('loadSubcategories');
+                toastr.error('Error al cargar las subcategorías.', 'Error');
+                reject(error);
             }
-        },
-        error: function () {
-            toastr.error('Error al cargar las subcategorías.', 'Error');
-        }
+        });
     });
 }
 
@@ -242,7 +336,7 @@ function populateSubcategoriesTable(subcategories) {
     tbody.empty();
 
     if (subcategories.length === 0) {
-        tbody.append('<tr><td colspan="6" class="text-center">No se encontraron subcategorías.</td></tr>');
+        tbody.append('<tr><td colspan="7" class="text-center">No se encontraron subcategorías.</td></tr>');
         return;
     }
 
@@ -253,7 +347,7 @@ function populateSubcategoriesTable(subcategories) {
             '<td>' + escapeHtml(subcategory.Descripcion || '') + '</td>' +
             '<td>' + escapeHtml(subcategory.NombreCategoria) + '</td>' +
             '<td><span class="badge ' + (subcategory.Estado ? 'badge-success' : 'badge-secondary') + '">' + (subcategory.Estado ? 'Activo' : 'Inactivo') + '</span></td>' +
-            '<td class="text-center"><span class="marcas-count">' + subcategory.totalMarcas + '</span></td>' +
+            '<td class="text-center"><span class="modelos-count">' + subcategory.TotalModelos + '</span></td>' +
             '<td class="action-buttons">' +
             '<button class="btn btn-info btn-sm btn-icon-only view-subcategory-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles" data-id="' + subcategory.IdSubCategoria + '"><i class="fas fa-eye"></i></button> ' +
             '<button class="btn btn-warning btn-sm btn-icon-only edit-subcategory-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-id="' + subcategory.IdSubCategoria + '"><i class="fas fa-edit"></i></button> ' +
@@ -263,8 +357,21 @@ function populateSubcategoriesTable(subcategories) {
         tbody.append(row);
     });
 
-    // Initialize tooltips for new buttons
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    // OPTIMIZACIÓN: Lazy loading de tooltips
+    initializeLazyTooltips();
+}
+
+// OPTIMIZACIÓN: Inicializar tooltips solo al hacer hover
+function initializeLazyTooltips() {
+    $('[data-bs-toggle="tooltip"]').off('mouseenter.tooltip').on('mouseenter.tooltip', function() {
+        const $this = $(this);
+        if (!$this.data('bs.tooltip')) {
+            $this.tooltip({
+                trigger: 'hover'
+            });
+            $this.tooltip('show');
+        }
+    });
 }
 
 function populatePagination(pagination) {
@@ -296,7 +403,8 @@ function populatePagination(pagination) {
 function resetModal() {
     $('#subcategoryForm')[0].reset();
     $('#subcategoryActive').prop('checked', true);
-    $('#subcategoryCategory').val('').trigger('change'); // Reset Select2
+    const select = $('#subcategoryCategory');
+    select.val('').trigger('change'); // Reset Select2
 }
 
 function saveSubcategory() {
@@ -315,10 +423,10 @@ function saveSubcategory() {
         return;
     }
 
-    const url = isEditMode ? '/SubCategorias/UpdateSubcategoria' : '/SubCategorias/CreateSubcategoria';
+    const url = isEditMode ? '/SubCategorias/UpdateSubCategoria' : '/SubCategorias/CreateSubcategoria';
     const data = isEditMode ?
         { id: editSubcategoryId, nombre: name, idCategoria: categoryId, descripcion: description, activo: active } :
-        { nombre: name, idCategoria: categoryId, descripcion: description, activo: active };
+        { nombre: name, idCat: categoryId, descripcion: description, activo: active };
 
     $.ajax({
         url: url,
@@ -360,19 +468,11 @@ function loadSubcategoryDetails(subcategoryId) {
                 
                 // Inicializar Select2 y establecer el valor
                 setTimeout(function() {
-                    const select = $('#subcategoryCategory');
-                    if (!select.hasClass('select2-hidden-accessible')) {
-                        if (typeof select.select2 === 'function') {
-                            select.select2({
-                                placeholder: 'Seleccione una categoría',
-                                allowClear: true,
-                                width: '100%',
-                                dropdownParent: $('#subcategoryModal')
-                            });
-                        }
-                    }
+                    initializeSelect2('#subcategoryCategory', {
+                        dropdownParent: $('#subcategoryModal')
+                    });
                     // Establecer el valor después de inicializar Select2
-                    select.val(subcategory.idCat).trigger('change');
+                    $('#subcategoryCategory').val(subcategory.idCat).trigger('change');
                 }, 100);
                 
                 isEditMode = true;

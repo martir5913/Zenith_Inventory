@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Catalogo\CN_Categoria.cs" />
+    <Compile Include="Catalogo\CN_Marca.cs" />
     <Compile Include="Catalogo\CN_SubCategoria.cs" />
     <Compile Include="CN_Autenticacion.cs" />
     <Compile Include="CN_DesarrolloHelper.cs" />

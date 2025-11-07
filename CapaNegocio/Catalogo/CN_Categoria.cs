@@ -112,7 +112,7 @@ namespace CapaNegocio.Categoria
             }
         }
 
-        public void ActualizarCategoria(CE_CategoriaUpdateDTO categoria, string usuarioModificacion)
+        public bool ActualizarCategoria(CE_CategoriaUpdateDTO categoria, string usuarioModificacion)
         {
             try
             {
@@ -140,7 +140,22 @@ namespace CapaNegocio.Categoria
                 // Obtener IP del contexto web
                 string ipModificacion = CC_ContextoWeb.ObtenerDireccionIP();
 
-                _datosCategoria.ActualizarCategoria(categoria, usuarioModificacion, ipModificacion);
+                int filasAfectadas = _datosCategoria.ActualizarCategoria(categoria, usuarioModificacion, ipModificacion);
+                
+                // Si no lanzó excepción y filasAfectadas != 0, fue exitoso
+                // Nota: SQL Server con SET NOCOUNT ON puede retornar -1, pero si no hay error, la operación fue exitosa
+                bool exitoso = (filasAfectadas != 0 || filasAfectadas == -1); // -1 significa que se ejecutó el SP correctamente
+                
+                if (exitoso)
+                {
+                    ErrorLogger.LogCustom($"Categoría {categoria.IdCategoria} actualizada exitosamente por {usuarioModificacion}");
+                    return true;
+                }
+                else
+                {
+                    ErrorLogger.LogCustom($"ADVERTENCIA: No se actualizó ninguna fila para categoría {categoria.IdCategoria}");
+                    return false;
+                }
             }
             catch (ValidationException)
             {
@@ -152,11 +167,12 @@ namespace CapaNegocio.Categoria
             }
             catch (Exception ex)
             {
+                ErrorLogger.Log(ex, $"Error al actualizar categoría {categoria?.IdCategoria}");
                 throw new BusinessLogicException($"Error al actualizar categoría: {ex.Message}", ex);
             }
         }
 
-        public void EliminarCategoria(int idCategoria, string usuarioEliminacion)
+        public bool EliminarCategoria(int idCategoria, string usuarioEliminacion)
         {
             try
             {
@@ -175,7 +191,21 @@ namespace CapaNegocio.Categoria
                 // Obtener IP del contexto web
                 string ipEliminacion = CC_ContextoWeb.ObtenerDireccionIP();
 
-                _datosCategoria.EliminarCategoria(idCategoria, usuarioEliminacion, ipEliminacion);
+                int filasAfectadas = _datosCategoria.EliminarCategoria(idCategoria, usuarioEliminacion, ipEliminacion);
+                
+                // Si no lanzó excepción y filasAfectadas != 0, fue exitoso
+                bool exitoso = (filasAfectadas != 0 || filasAfectadas == -1); // -1 significa que se ejecutó el SP correctamente
+                
+                if (exitoso)
+                {
+                    ErrorLogger.LogCustom($"Categoría {idCategoria} eliminada exitosamente por {usuarioEliminacion}");
+                    return true;
+                }
+                else
+                {
+                    ErrorLogger.LogCustom($"ADVERTENCIA: No se eliminó ninguna fila para categoría {idCategoria}");
+                    return false;
+                }
             }
             catch (ValidationException)
             {
@@ -187,6 +217,7 @@ namespace CapaNegocio.Categoria
             }
             catch (Exception ex)
             {
+                ErrorLogger.Log(ex, $"Error al eliminar categoría {idCategoria}");
                 throw new BusinessLogicException($"Error al eliminar categoría: {ex.Message}", ex);
             }
         }

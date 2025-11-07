@@ -123,6 +123,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\Catalogos\CategoriasController.cs" />
+    <Compile Include="Controllers\Catalogos\MarcasController.cs" />
     <Compile Include="Controllers\Catalogos\SubCategoriasController.cs" />
     <Compile Include="Controllers\EquiposController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -135,13 +136,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\categorias.css" />
+    <Content Include="Content\css\Catalogos\categorias.css" />
+    <Content Include="Content\css\dashboard.css" />
+    <Content Include="Content\css\equipos.css" />
     <Content Include="Content\css\layout.css" />
     <Content Include="Content\css\login.css" />
     <Content Include="Content\img\favicon.ico" />
     <Content Include="Content\img\login-hero-bg.jpg" />
     <Content Include="Content\img\Logo_zenith_sin_fondo.png" />
-    <Content Include="Content\subcategorias.css" />
+    <Content Include="Content\css\Catalogos\subcategorias.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\Site.css" />
@@ -149,10 +152,19 @@
     <Content Include="Schema\001_Schema.sql" />
     <Content Include="Schema\002_Permisos_Categorias.sql" />
     <Content Include="Schema\002_Poblacion.sql" />
-    <Content Include="Schema\003_SP.sql" />
+    <Content Include="Schema\003_SP_Modelos_CRUD.sql" />
     <Content Include="Schema\004_SP_Categorias_CRUD.sql" />
     <Content Include="Schema\005_Migration_Categorias_Auditoria.sql" />
     <Content Include="Schema\005_SP_Subcategorias_CRUD.sql" />
+    <Content Include="Schema\006_Fix_Catalog_Hierarchy.sql" />
+    <Content Include="Schema\007_SP_Marcas_CRUD.sql" />
+    <Content Include="Schema\008_Update_Modelos_Table.sql" />
+    <Content Include="Schema\009_SP_Modelos_CRUD.sql" />
+    <Content Include="Schema\010_Fix_Final_Catalog_Hierarchy.sql" />
+    <Content Include="Schema\011_SP_Marcas_Final.sql" />
+    <Content Include="Schema\012_SP_Modelos_Final.sql" />
+    <Content Include="Schema\013_Fix_SP_Categorias_RowCount.sql" />
+    <Content Include="Schema\014_Fix_SP_Subcategorias_RowCount.sql" />
     <Content Include="Scripts\Catalogos\categorias.js" />
     <Content Include="Scripts\Catalogos\subcategorias.js" />
     <Content Include="Scripts\layout.js" />

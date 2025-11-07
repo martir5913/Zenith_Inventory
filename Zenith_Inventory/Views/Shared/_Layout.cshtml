@@ -398,11 +398,10 @@
         window.zenithContext = {
             controller: '@ViewContext.RouteData.Values["controller"]',
             action: '@ViewContext.RouteData.Values["action"]'
-        };
-        console.log('Zenith Context:', window.zenithContext);
+        };       
     </script>
 
-    <script src="~/Scripts/layout.js"></script> 
+    <script src="~/Scripts/layout.js"></script>
 
     @RenderSection("scripts", required: false)
 </body>

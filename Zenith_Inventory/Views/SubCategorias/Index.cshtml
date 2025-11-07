@@ -3,7 +3,8 @@
 }
 
 @section Styles {
-    <link href="~/Content/subcategorias.css" rel="stylesheet" />
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Styles.Render("~/Content/catalogos/subcategorias")
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 }
 
@@ -46,7 +47,7 @@
                         <th>Descripción</th>
                         <th>Categoría</th>
                         <th>Activo</th>
-                        <th class="text-center">Marcas</th>
+                        <th class="text-center">Modelo</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -242,5 +243,6 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
-    <script src="~/Scripts/Catalogos/subcategorias.js" defer></script>
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Scripts.Render("~/bundles/catalogos/subcategorias")
 }
