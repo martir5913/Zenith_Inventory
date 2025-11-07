@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalogo\CD_Categoria.cs" />
+    <Compile Include="Catalogo\CD_Marca.cs" />
+    <Compile Include="Catalogo\CD_SubCategoria.cs" />
     <Compile Include="CD_Configuracion.cs" />
     <Compile Include="CD_Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +57,9 @@
       <Project>{7af6ed74-b324-4078-9f81-1743dd29ea52}</Project>
       <Name>CapaEntidad</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Marca\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

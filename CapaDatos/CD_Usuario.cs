@@ -1,4 +1,5 @@
 ﻿using CapaComun;
+using CapaComun.Excepciones;
 using CapaEntidad;
 using CapaEntidad.DTOs;
 using System;
@@ -185,7 +186,7 @@ namespace CapaDatos
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener información del usuario {userId}: {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener información del usuario {userId}: {ex.Message}", ex);
             }
         }
 
@@ -250,7 +251,7 @@ namespace CapaDatos
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener usuario por username '{username}': {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener usuario por username '{username}': {ex.Message}", ex);
             }
         }
 
@@ -303,7 +304,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al crear usuario");
-                throw new Exception($"Error al crear usuario: {ex.Message}", ex);
+                throw new DataAccessException($"Error al crear usuario: {ex.Message}", ex);
             }
         }
 
@@ -356,7 +357,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al crear usuario temporal");
-                throw new Exception($"Error al crear usuario temporal: {ex.Message}", ex);
+                throw new DataAccessException($"Error al crear usuario temporal: {ex.Message}", ex);
             }
         }
 
@@ -392,7 +393,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al listar usuarios");
-                throw new Exception($"Error al listar usuarios: {ex.Message}", ex);
+                throw new DataAccessException($"Error al listar usuarios: {ex.Message}", ex);
             }
         }
 
@@ -441,7 +442,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al cambiar contrase?a");
-                throw new Exception($"Error al cambiar contrase?a: {ex.Message}", ex);
+                throw new DataAccessException($"Error al cambiar contrase?a: {ex.Message}", ex);
             }
         }
 
@@ -490,7 +491,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al resetear contraseña");
-                throw new Exception($"Error al resetear contraseña: {ex.Message}", ex);
+                throw new DataAccessException($"Error al resetear contraseña: {ex.Message}", ex);
             }
         }
 
@@ -530,7 +531,7 @@ namespace CapaDatos
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Error al obtener roles disponibles");
-                throw new Exception($"Error al obtener roles disponibles: {ex.Message}", ex);
+                throw new DataAccessException($"Error al obtener roles disponibles: {ex.Message}", ex);
             }
         }
 

@@ -1,0 +1,248 @@
+﻿@{
+    ViewBag.Title = "Gestión de Subcategorías";
+}
+
+@section Styles {
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Styles.Render("~/Content/catalogos/subcategorias")
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+}
+
+<div class="container-fluid px-4">
+    <h2 class="page-title-custom mb-4">@ViewBag.Title</h2>
+
+    <div class="search-container mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Buscar subcategorías..." />
+            </div>
+            <div class="col-md-3">
+                <select id="filterCategory" class="form-control">
+                    <option value="">Todas las categorías</option>
+                    <!-- Categories will be loaded here -->
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="filterStatus" class="form-control">
+                    <option value="">Todos los estados</option>
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
+            </div>
+            <div class="col-md-4 text-end">
+                <button id="btnAddSubcategory" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Agregar Subcategoría
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="subcategoriesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Activo</th>
+                        <th class="text-center">Modelo</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="subcategoriesBody">
+                    <!-- Subcategories will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="paginationContainer" class="d-flex justify-content-center mt-3">
+            <!-- Pagination will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Add/Edit Subcategory - Diseño Moderno -->
+<div class="modal fade" id="subcategoryModal" tabindex="-1" role="dialog" aria-labelledby="subcategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Header con diseño moderno -->
+            <div class="modal-header detail-modal-header">
+                <div class="d-flex align-items-center w-100">
+                    <div class="detail-icon-box me-3">
+                        <i class="fas fa-plus" id="modalIcon"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="modal-title" id="subcategoryModalLabel">
+                            Agregar Subcategoría
+                        </h5>
+                        <small class="detail-subtitle-header">Complete la información requerida</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="subcategoryForm">
+                    <div class="form-group mb-3">
+                        <label for="subcategoryName" class="form-label">
+                            <i class="fas fa-tag text-primary me-1"></i>Nombre <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="subcategoryName" class="form-control" placeholder="Ingrese el nombre de la subcategoría" required />
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="subcategoryCategory" class="form-label">
+                            <i class="fas fa-folder text-primary me-1"></i>Categoría <span class="text-danger">*</span>
+                        </label>
+                        <select id="subcategoryCategory" class="form-control" required>
+                            <option value="">Seleccione una categoría</option>
+                            <!-- Categories will be loaded here -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="subcategoryDescription" class="form-label">
+                            <i class="fas fa-align-left text-primary me-1"></i>Descripción
+                        </label>
+                        <textarea id="subcategoryDescription" class="form-control" rows="3" placeholder="Ingrese una descripción opcional"></textarea>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" id="subcategoryActive" class="form-check-input" checked />
+                        <label class="form-check-label" for="subcategoryActive">
+                            <i class="fas fa-toggle-on text-primary me-1"></i>Subcategoría activa
+                        </label>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" id="btnSaveSubcategory" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for View Subcategory Details - Diseño Optimizado -->
+<div class="modal fade" id="viewSubcategoryModal" tabindex="-1" aria-labelledby="viewSubcategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Header con mejor contraste -->
+            <div class="modal-header detail-modal-header">
+                <div class="d-flex align-items-center w-100">
+                    <div class="detail-icon-box me-3">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="modal-title mb-0" id="viewSubcategoryModalLabel">
+                            Detalles de Subcategoría
+                        </h5>
+                        <small class="detail-subtitle-header">Información del registro</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body p-0">
+                <!-- Sección Principal con Información Clave -->
+                <div class="detail-main-info">
+                    <div class="row g-0">
+                        <div class="col-8">
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <label class="detail-field-label">
+                                        <i class="fas fa-tag me-2"></i>Nombre
+                                    </label>
+                                    <h4 class="detail-field-value" id="viewSubcategoryName">--</h4>
+                                </div>
+                                <div>
+                                    <label class="detail-field-label">
+                                        <i class="fas fa-folder me-2"></i>Categoría
+                                    </label>
+                                    <p class="detail-field-text mb-0" id="viewSubcategoryCategory">--</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="detail-status-section">
+                                <label class="detail-field-label text-center d-block mb-2">
+                                    <i class="fas fa-info-circle me-1"></i>Estado
+                                </label>
+                                <span id="viewSubcategoryActive" class="status-badge-large d-block mb-2">--</span>
+                                <small class="detail-id-text">ID: <strong id="viewSubcategoryId">--</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Descripción -->
+                <div class="detail-description-section">
+                    <div class="detail-section-header">
+                        <i class="fas fa-align-left me-2"></i>
+                        <span>Descripción</span>
+                    </div>
+                    <div class="detail-section-body">
+                        <p class="detail-description-text" id="viewSubcategoryDescription">
+                            Sin descripción disponible
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Información Adicional en Cards Compactas -->
+                <div class="detail-stats-section">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Modelos</span>
+                                    <span class="stat-value" id="viewSubcategoryModelsCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Creado por</span>
+                                    <span class="stat-creator" id="viewSubcategoryCreator">Sistema</span>
+                                    <span class="stat-date" id="viewSubcategoryCreationDate">--/--/----</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnEditFromView">
+                    <i class="fas fa-edit me-1"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+    @* Bundle configurado en BundleConfig.cs - Automáticamente minifica en modo RELEASE *@
+    @Scripts.Render("~/bundles/catalogos/subcategorias")
+}

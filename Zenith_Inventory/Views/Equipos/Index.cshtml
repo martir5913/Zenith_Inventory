@@ -1,0 +1,131 @@
+@{
+    ViewBag.Title = "Gestión de Equipos";
+}
+
+@section Styles {
+    @* Bundle de estilos de equipos - Minifica automáticamente en producción *@
+    @Styles.Render("~/Content/equipos")
+}
+
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2">Gestión de Equipos</h1>
+                <p class="text-muted mb-0">Administra el inventario de equipos del sistema</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" id="btnNuevoEquipo">
+                    <i class="bi bi-plus-circle"></i> Nuevo Equipo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Equipos</h6>
+                        <h2 class="mb-0">0</h2>
+                        <small class="text-muted">Registrados en el sistema</small>
+                    </div>
+                    <div class="icon-box bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-laptop fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Disponibles</h6>
+                        <h2 class="mb-0">0</h2>
+                        <small class="text-muted">Listos para asignar</small>
+                    </div>
+                    <div class="icon-box bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-check-circle fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Asignados</h6>
+                        <h2 class="mb-0">0</h2>
+                        <small class="text-muted">En uso actualmente</small>
+                    </div>
+                    <div class="icon-box bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-person-check fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">En Reparación</h6>
+                        <h2 class="mb-0">0</h2>
+                        <small class="text-muted">Fuera de servicio</small>
+                    </div>
+                    <div class="icon-box bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-tools fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-laptop"></i> Lista de Equipos
+                    </h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                    </div>
+                    <h5 class="text-muted">Módulo en Desarrollo</h5>
+                    <p class="text-muted mb-3">
+                        La gestión de equipos está siendo implementada.<br>
+                        Por el momento, puedes gestionar:
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="@Url.Action("Index", "Categorias")" class="btn btn-outline-primary">
+                            <i class="bi bi-tag"></i> Categorías
+                        </a>
+                        <a href="@Url.Action("Index", "SubCategorias")" class="btn btn-outline-primary">
+                            <i class="bi bi-tags"></i> Subcategorías
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
