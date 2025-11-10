@@ -1335,7 +1335,7 @@ function guardarPermisosAsignados() {
 }
 
 // ============================================
-// MEJORAS EN LA FUNCIÓN ELIMINARROL
+// CRUD - ELIMINAR Y REACTIVAR (DISEÑO MODERNO)
 // ============================================
 
 function eliminarRol(rolId) {
@@ -1359,7 +1359,7 @@ function eliminarRol(rolId) {
 
     mensajeAdvertencia += '.';
 
-    confirmDialog({
+    Swal.fire({
         title: `¿Eliminar "${rolNombre}"?`,
         text: mensajeAdvertencia,
         icon: 'warning',
@@ -1436,10 +1436,6 @@ function eliminarRol(rolId) {
     });
 }
 
-// ============================================
-// FUNCIÓN PARA REACTIVAR ROL
-// ============================================
-
 function reactivarRol(rolId, rolNombre) {
     // Validar ID
     if (!rolId || rolId <= 0) {
@@ -1447,7 +1443,7 @@ function reactivarRol(rolId, rolNombre) {
         return;
     }
 
-    confirmDialog({
+    Swal.fire({
         title: `¿Reactivar "${rolNombre}"?`,
         text: 'Esta acción volverá a activar el rol y estará disponible para asignación.',
         icon: 'question',

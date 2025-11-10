@@ -18,7 +18,7 @@ namespace CapaDatos.Catalogo
             _conexion = new CC_Conexion();
         }
 
-        public CE_PagedResult<CE_SubCategoriaListDTO> ObtenerSubCategoriasPaginadas(int pageNumber = 1, int pageSize = 10, string searchTerm = null, bool incluirInactivos = false, int? idCategoria = null)
+        public CE_PagedResult<CE_SubCategoriaListDTO> ObtenerSubCategoriasPaginadas(int pageNumber = 1, int pageSize = 10, string searchTerm = null, bool incluirInactivos = false, int? idCategoria = null, bool? soloInactivos = null)
         {
             try
             {
@@ -29,6 +29,7 @@ namespace CapaDatos.Catalogo
                     CC_Conexion.CrearParametro("@SearchTerm", (object)searchTerm ?? DBNull.Value, SqlDbType.NVarChar, 100),
                     CC_Conexion.CrearParametro("@IncluirInactivos", incluirInactivos, SqlDbType.Bit),
                     CC_Conexion.CrearParametro("@IdCategoria", (object)idCategoria ?? DBNull.Value, SqlDbType.Int),
+                    CC_Conexion.CrearParametro("@SoloInactivos", (object)soloInactivos ?? DBNull.Value, SqlDbType.Bit),
                     new SqlParameter("@TotalRegistros", SqlDbType.Int)
                     {
                         Direction = ParameterDirection.Output
@@ -37,8 +38,8 @@ namespace CapaDatos.Catalogo
 
                 DataSet dataSet = _conexion.EjecutarProcedimiento("ZI_GENERAL.SP_SUBCATEGORIAS_LISTAR_PAGINADO", parametros);
 
-                int totalRegistros = parametros[5].Value != DBNull.Value
-                    ? Convert.ToInt32(parametros[5].Value)
+                int totalRegistros = parametros[6].Value != DBNull.Value
+                    ? Convert.ToInt32(parametros[6].Value)
                     : 0;
 
                 List<CE_SubCategoriaListDTO> SubCategoria = new List<CE_SubCategoriaListDTO>();
@@ -177,6 +178,34 @@ namespace CapaDatos.Catalogo
             {
                 ErrorLogger.Log(ex, "Error al borrar la SubCategoria");
                 throw new DataAccessException($"Error al borrar la subcategoria: {ex.Message}", ex);
+            }
+        }
+
+        public int ReactivarSubCat(int idSubCat, string usuarioModificacion, string ipModificacion)
+        {
+            try
+            {
+                var parametros = new List<SqlParameter>
+                {
+                    CC_Conexion.CrearParametro("@IdSubcategoria", idSubCat, SqlDbType.Int),
+                    CC_Conexion.CrearParametro("@UsuarioModificacion", usuarioModificacion, SqlDbType.NVarChar, 100),
+                    CC_Conexion.CrearParametro("@IpModificacion", ipModificacion, SqlDbType.NVarChar, 45),
+                    new SqlParameter("@FilasAfectadas", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    }
+                };
+
+                _conexion.EjecutarProcedimiento("ZI_GENERAL.SP_SUBCATEGORIAS_REACTIVAR", parametros);
+
+                int filasAfectadas = parametros[3].Value != DBNull.Value ? Convert.ToInt32(parametros[3].Value) : 0;
+
+                return filasAfectadas;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Error al reactivar la SubCategoria");
+                throw new DataAccessException($"Error al reactivar la subcategoría: {ex.Message}", ex);
             }
         }
 

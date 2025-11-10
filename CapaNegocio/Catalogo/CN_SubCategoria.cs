@@ -26,12 +26,36 @@ namespace CapaNegocio.Catalogo
                 if (pageSize < 1 || pageSize > 100)
                     throw new ValidationException("El tamaño de página debe estar entre 1 y 100");
 
+                // ✅ FIX COMPLETO: Lógica corregida para manejar los tres estados
+                bool incluirInactivos;
+                bool? soloInactivos = null;
+                
+                if (!activo.HasValue)
+                {
+                    // Filtro "Todos" → Incluir activos e inactivos
+                    incluirInactivos = true;
+                    soloInactivos = null;
+                }
+                else if (activo.Value)
+                {
+                    // Filtro "Solo Activos" → Solo activos
+                    incluirInactivos = false;
+                    soloInactivos = null;
+                }
+                else
+                {
+                    // Filtro "Solo Inactivos" → Solo inactivos
+                    incluirInactivos = true;
+                    soloInactivos = true;
+                }
+
                 return _SubCategoria.ObtenerSubCategoriasPaginadas(
                     pageNumber,
                     pageSize,
                     searchTerm,
-                    incluirInactivos: activo.HasValue ? !activo.Value : false,
-                    idCategoria: idCategoria
+                    incluirInactivos: incluirInactivos,
+                    idCategoria: idCategoria,
+                    soloInactivos: soloInactivos
                     );
             }
             catch (ValidationException)
@@ -177,6 +201,58 @@ namespace CapaNegocio.Catalogo
                 throw new BusinessLogicException($"Error al desactivar la Subcategoría: {ex.Message}", ex);
             }
         }
+
+        public bool ReactivarSubCat(int idSubCat, string usuarioModificacion)
+        {
+            try
+            {
+                if (idSubCat <= 0)
+                    throw new ValidationException("El ID de la subcategoría debe ser mayor a 0");
+
+                // Verificar que la subcategoría existe
+                var subcategoria = _SubCategoria.SubCategoriaPorId(idSubCat);
+                if (subcategoria == null)
+                    throw new ValidationException("La subcategoría no existe");
+
+                // Verificar que esté inactiva
+                if (subcategoria.Estado)
+                {
+                    throw new ValidationException("La subcategoría ya está activa");
+                }
+
+                // Obtener IP del contexto web
+                string ipModificacion = CC_ContextoWeb.ObtenerDireccionIP();
+
+                int filasAfectadas = _SubCategoria.ReactivarSubCat(idSubCat, usuarioModificacion, ipModificacion);
+                
+                bool exitoso = (filasAfectadas != 0 || filasAfectadas == -1);
+                
+                if (exitoso)
+                {
+                    ErrorLogger.LogCustom($"SubCategoría {idSubCat} reactivada exitosamente por {usuarioModificacion}");
+                    return true;
+                }
+                else
+                {
+                    ErrorLogger.LogCustom($"ADVERTENCIA: No se reactivó ninguna fila para Subcategoría {idSubCat}");
+                    return false;
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DataAccessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, $"Error al reactivar Subcategoría {idSubCat}");
+                throw new BusinessLogicException($"Error al reactivar Subcategoría: {ex.Message}", ex);
+            }
+        }
+
         public int CrearSubCat(CE_SubCategoriaCreateDTO subcate)
         {
             try

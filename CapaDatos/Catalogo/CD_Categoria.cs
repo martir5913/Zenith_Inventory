@@ -211,5 +211,36 @@ namespace CapaDatos.Categoria
                 throw new DataAccessException($"Error al eliminar categoría: {ex.Message}", ex);
             }
         }
+
+        public int ReactivarCategoria(int idCategoria, string usuarioModificacion, string ipModificacion)
+        {
+            try
+            {
+                var parametros = new List<SqlParameter>
+                {
+                    CC_Conexion.CrearParametro("@IdCategoria", idCategoria, SqlDbType.Int),
+                    CC_Conexion.CrearParametro("@UsuarioModificacion", usuarioModificacion, SqlDbType.NVarChar, 100),
+                    CC_Conexion.CrearParametro("@IpModificacion", ipModificacion, SqlDbType.NVarChar, 45),
+                    new SqlParameter("@FilasAfectadas", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    }
+                };
+
+                _conexion.EjecutarProcedimientoSinResultado("ZI_GENERAL.SP_CATEGORIAS_REACTIVAR", parametros);
+                
+                // Obtener filas afectadas del parámetro OUTPUT
+                int filasAfectadas = parametros[3].Value != DBNull.Value
+                    ? Convert.ToInt32(parametros[3].Value)
+                    : 0;
+                
+                return filasAfectadas;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Error al reactivar categoria");
+                throw new DataAccessException($"Error al reactivar categoría: {ex.Message}", ex);
+            }
+        }
     }
 }

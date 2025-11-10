@@ -15,7 +15,7 @@ let availableRoles = [];
 $(document).ready(function () {
     initializeTabs();
     initializeEventHandlers();
-    
+
     // Load initial data only for active tab
     loadUsers();
     loadRoles();
@@ -25,13 +25,13 @@ function initializeTabs() {
     // Ensure first tab is active
     const firstTab = document.querySelector('#usuarios-tab');
     const firstTabPane = document.querySelector('#usuarios-content');
-    
+
     if (firstTab && firstTabPane) {
         firstTab.classList.add('active');
         firstTab.setAttribute('aria-selected', 'true');
         firstTabPane.classList.add('show', 'active');
     }
-    
+
     // Handle tab change events
     const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
     tabButtons.forEach(button => {
@@ -40,14 +40,14 @@ function initializeTabs() {
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 pane.classList.remove('show', 'active');
             });
-            
+
             // Show the selected tab pane
             const targetId = this.getAttribute('data-bs-target');
             const targetPane = document.querySelector(targetId);
             if (targetPane) {
                 targetPane.classList.add('show', 'active');
             }
-            
+
             // Trigger specific actions based on tab
             const tabId = this.getAttribute('id');
             handleTabSwitch(tabId);
@@ -60,15 +60,15 @@ function handleTabSwitch(tabId) {
     document.querySelectorAll('.tab-pane').forEach(pane => {
         pane.style.display = 'none';
     });
-    
+
     // Show only the active pane
     const activePane = document.querySelector('.tab-pane.active');
     if (activePane) {
         activePane.style.display = 'block';
     }
-    
+
     // Load data if needed
-    switch(tabId) {
+    switch (tabId) {
         case 'usuarios-tab':
             // Already loaded on init
             break;
@@ -107,7 +107,7 @@ function initializeEventHandlers() {
     $('#btnAddUser').on('click', openAddUserModal);
     $('#btnSaveUser').on('click', saveUser);
     $('#btnEditUserFromView').on('click', editUserFromView);
-    
+
     // Password actions
     $('#btnGeneratePassword').on('click', generatePassword);
     $('#togglePassword').on('click', togglePasswordVisibility);
@@ -126,7 +126,7 @@ function initializeEventHandlers() {
 function loadUsers() {
     console.time('loadUsers');
     showLoading();
-    
+
     const incluirInactivos = currentFilter === 'todos' || currentFilter === 'inactivos';
     const soloBloqueados = currentFilter === 'bloqueados';
 
@@ -144,11 +144,11 @@ function loadUsers() {
             console.timeEnd('loadUsers');
             console.log('Response de GetUsuarios:', response); // Debug
             hideLoading();
-            
+
             // Detectar si la respuesta es HTML (página de error)
             if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html') || response.includes('Acceso Denegado'))) {
-                console.error('❌ Respuesta HTML detectada (posible error de permisos o autenticación)');
-                
+                console.error('? Respuesta HTML detectada (posible error de permisos o autenticación)');
+
                 // Usar el mismo diseño que AccessDenied.cshtml (sin instrucciones técnicas)
                 $('#usersBody').html(`
                     <tr>
@@ -168,16 +168,16 @@ function loadUsers() {
                         </td>
                     </tr>
                 `);
-                
+
                 toastr.error('No tiene permisos para ver usuarios.', 'Acceso Denegado', {
                     timeOut: 5000,
                     closeButton: true,
                     progressBar: true
                 });
-                
+
                 return;
             }
-            
+
             if (response.success) {
                 renderUsers(response.data.items);
                 renderPagination(response.data.pagination);
@@ -187,14 +187,14 @@ function loadUsers() {
         },
         error: function (xhr, status, error) {
             console.timeEnd('loadUsers');
-            console.error('Error AJAX al cargar usuarios:', {xhr, status, error});
+            console.error('Error AJAX al cargar usuarios:', { xhr, status, error });
             hideLoading();
-            
+
             let errorMsg = 'Error al cargar los usuarios';
             let errorDetail = '';
             let iconClass = 'bi-exclamation-triangle';
             let iconColor = '#ffc107';
-            
+
             // Detectar tipo de error
             if (xhr.status === 401) {
                 errorMsg = 'Sesión Expirada';
@@ -219,9 +219,9 @@ function loadUsers() {
             } else {
                 errorDetail = 'No se pudo conectar con el servidor';
             }
-            
+
             toastr.error(errorDetail, errorMsg);
-            
+
             $('#usersBody').html(`
                 <tr>
                     <td colspan="8" class="text-center py-5">
@@ -357,11 +357,11 @@ function renderPagination(pagination) {
     `;
 
     html += '</ul>';
-    
+
     html += `<p class="text-muted small mt-2 text-center">
                 Mostrando ${pagination.pageSize * (currentPage - 1) + 1} - ${Math.min(pagination.pageSize * currentPage, pagination.totalRecords)} de ${pagination.totalRecords} usuarios
              </p>`;
-    
+
     container.html(html);
 }
 
@@ -410,18 +410,18 @@ function openAddUserModal() {
 
 function editUser(userId) {
     showLoading();
-    
+
     $.ajax({
         url: '/Usuarios/GetUsuarioDetalle',
         type: 'GET',
         data: { id: userId },
         success: function (response) {
             hideLoading();
-            
+
             if (response.success) {
                 const user = response.data;
                 currentUserId = userId;
-                
+
                 $('#userId').val(userId);
                 $('#userCodigo').val(user.codigo).prop('disabled', true);
                 $('#userUsername').val(user.username).prop('disabled', true);
@@ -432,13 +432,13 @@ function editUser(userId) {
                 $('#userDepartamento').val(user.departamento);
                 $('#userPuesto').val(user.puesto);
                 $('#userActivo').prop('checked', user.activo);
-                
+
                 $('#passwordSection').hide();
                 $('#userPassword').prop('required', false);
-                
+
                 const selectedRoles = user.roles.map(r => r.idRol);
                 renderRolesCheckboxes(selectedRoles);
-                
+
                 $('#userModalLabel').text('Editar Usuario');
                 $('#userModalIcon').removeClass().addClass('fas fa-user-edit');
                 $('#userModal').modal('show');
@@ -453,18 +453,18 @@ function editUser(userId) {
 
 function viewUser(userId) {
     showLoading();
-    
+
     $.ajax({
         url: '/Usuarios/GetUsuarioDetalle',
         type: 'GET',
         data: { id: userId },
         success: function (response) {
             hideLoading();
-            
+
             if (response.success) {
                 currentUserId = userId;
                 const user = response.data;
-                
+
                 // Información básica
                 $('#viewUserUsername').text(user.username);
                 $('#viewUserNombre').text(user.nombreCompleto);
@@ -473,16 +473,16 @@ function viewUser(userId) {
                 $('#viewUserTelefono').text(user.telefono || '--');
                 $('#viewUserDepartamento').text(user.departamento || '--');
                 $('#viewUserPuesto').text(user.puesto || '--');
-                
+
                 // Estado
                 const estadoBadge = $('#viewUserEstado');
                 estadoBadge.attr('data-estado', user.estadoTexto);
                 estadoBadge.text(user.estadoTexto);
-                
+
                 // Roles
                 const rolesContainer = $('#viewUserRoles');
                 rolesContainer.empty();
-                
+
                 if (user.roles && user.roles.length > 0) {
                     user.roles.forEach(rol => {
                         rolesContainer.append(`
@@ -495,18 +495,18 @@ function viewUser(userId) {
                 } else {
                     rolesContainer.append('<p class="no-roles">Sin roles asignados</p>');
                 }
-                
+
                 // Estadísticas
                 $('#viewUserUltimoLogin').text(user.ultimoLogin || 'Nunca');
                 $('#viewUserIntentos').text(user.intentosFallidos);
                 $('#viewUserPassTemp').text(user.requiereCambioPassword ? 'Sí' : 'No');
-                
+
                 // Auditoría
                 $('#viewUserCreador').text(user.usuarioCreacion);
                 $('#viewUserFechaCreacion').text(user.fechaCreacion);
                 $('#viewUserModificador').text(user.usuarioModificacion || '--');
                 $('#viewUserFechaModificacion').text(user.fechaModificacion || '--');
-                
+
                 $('#viewUserModal').modal('show');
             }
         },
@@ -524,14 +524,14 @@ function editUserFromView() {
 
 function saveUser() {
     if (!validateUserForm()) return;
-    
+
     const isEdit = $('#userId').val() !== '';
     const userData = collectUserData();
-    
+
     showLoading();
-    
+
     const url = isEdit ? '/Usuarios/UpdateUsuario' : '/Usuarios/CreateUsuario';
-    
+
     $.ajax({
         url: url,
         type: 'POST',
@@ -539,7 +539,7 @@ function saveUser() {
         data: JSON.stringify(userData),
         success: function (response) {
             hideLoading();
-            
+
             if (response.success) {
                 showSuccess(
                     isEdit ? 'Usuario actualizado' : 'Usuario creado',
@@ -554,7 +554,7 @@ function saveUser() {
         error: function (xhr) {
             hideLoading();
             let errorMessage = 'No se pudo guardar el usuario';
-            
+
             // Manejo de errores específicos
             if (xhr.status === 400) {
                 errorMessage = 'Datos inválidos. Por favor, verifique la información ingresada.';
@@ -563,7 +563,7 @@ function saveUser() {
             } else if (xhr.status === 500) {
                 errorMessage = 'Error interno del servidor. Por favor, intente nuevamente más tarde.';
             }
-            
+
             showError('Error', errorMessage);
         }
     });
@@ -582,14 +582,14 @@ function deleteUser(userId, username) {
     }).then((result) => {
         if (result.isConfirmed) {
             showLoading();
-            
+
             $.ajax({
                 url: '/Usuarios/DeleteUsuario',
                 type: 'POST',
                 data: { id: userId },
                 success: function (response) {
                     hideLoading();
-                    
+
                     if (response.success) {
                         showSuccess('Usuario eliminado', response.message);
                         loadUsers();
@@ -619,21 +619,21 @@ function openResetPasswordModal(userId) {
 
 function resetPassword() {
     const userId = $('#resetUserId').val();
-    
+
     showLoading();
-    
+
     $.ajax({
         url: '/Usuarios/ResetearPassword',
         type: 'POST',
         data: { id: userId },
         success: function (response) {
             hideLoading();
-            
+
             if (response.success) {
                 $('#newPasswordValue').val(response.data.passwordTemporal);
                 $('#newPasswordDisplay').removeClass('d-none');
                 $('#btnConfirmReset').hide();
-                
+
                 showSuccess('Contraseña reseteada', response.message);
             } else {
                 showError('Error', response.message);
@@ -659,14 +659,14 @@ function unlockUser(userId) {
     }).then((result) => {
         if (result.isConfirmed) {
             showLoading();
-            
+
             $.ajax({
                 url: '/Usuarios/DesbloquearUsuario',
                 type: 'POST',
                 data: { id: userId },
                 success: function (response) {
                     hideLoading();
-                    
+
                     if (response.success) {
                         showSuccess('Usuario desbloqueado', response.message);
                         loadUsers();
@@ -691,7 +691,7 @@ function generatePassword() {
             if (response.success) {
                 $('#userPassword').val(response.data.passwordTemporal);
                 $('#userPassword').attr('type', 'text');
-                
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Contraseña generada',
@@ -706,7 +706,7 @@ function generatePassword() {
 function togglePasswordVisibility() {
     const passwordInput = $('#userPassword');
     const icon = $('#togglePassword i');
-    
+
     if (passwordInput.attr('type') === 'password') {
         passwordInput.attr('type', 'text');
         icon.removeClass('fa-eye').addClass('fa-eye-slash');
@@ -766,8 +766,8 @@ function validateUserForm() {
 function collectUserData() {
     const isEdit = $('#userId').val() !== '';
     const selectedRoles = [];
-    
-    $('#rolesContainer input[type="checkbox"]:checked').each(function() {
+
+    $('#rolesContainer input[type="checkbox"]:checked').each(function () {
         selectedRoles.push(parseInt($(this).val()));
     });
 

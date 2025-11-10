@@ -163,11 +163,16 @@
     <Content Include="Schema\Fase1\001_Schema.sql" />
     <Content Include="Schema\Fase1\002_Permisos_Categorias.sql" />
     <Content Include="Schema\Fase1\002_Poblacion.sql" />
+    <Content Include="Schema\Fase1\002_SP_CATEGORIAS_OBTENER_POR_ID.sql" />
+    <Content Include="Schema\Fase1\003_SP_CATEGORIAS_LISTAR_PAGINADO.sql" />
     <Content Include="Schema\Fase1\003_SP_Modelos_CRUD.sql" />
     <Content Include="Schema\Fase1\004_SP_Categorias_CRUD.sql" />
+    <Content Include="Schema\Fase1\004_SP_CATEGORIAS_REACTIVAR.sql" />
     <Content Include="Schema\Fase1\005_Migration_Categorias_Auditoria.sql" />
     <Content Include="Schema\Fase1\005_SP_Subcategorias_CRUD.sql" />
+    <Content Include="Schema\Fase1\005_SP_SUBCATEGORIAS_REACTIVAR.sql" />
     <Content Include="Schema\Fase1\006_Fix_Catalog_Hierarchy.sql" />
+    <Content Include="Schema\Fase1\006_SP_SUBCATEGORIAS_LISTAR_PAGINADO.sql" />
     <Content Include="Schema\Fase1\007_SP_Marcas_CRUD.sql" />
     <Content Include="Schema\Fase1\008_Update_Modelos_Table.sql" />
     <Content Include="Schema\Fase1\009_SP_Modelos_CRUD.sql" />

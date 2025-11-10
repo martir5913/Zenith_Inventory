@@ -27,11 +27,17 @@ namespace Zenith_Inventory.Controllers.Catalogos
 
         [HttpGet]
         [PermissionFilter("CATEGORIAS", "LEER")]
-        public JsonResult GetCategorias(int page = 1, int pageSize = 10, string search = null)
+        public JsonResult GetCategorias(int page = 1, int pageSize = 10, string search = null, bool incluirInactivos = false)
         {
             try
             {
-                CE_PagedResult<CE_CategoriaListDTO> resultado = _negocioCategoria.ObtenerCategoriasPaginadas(page, pageSize, search);
+                // Determinar si incluir inactivos según el parámetro
+                CE_PagedResult<CE_CategoriaListDTO> resultado = _negocioCategoria.ObtenerCategoriasPaginadas(
+                    page, 
+                    pageSize, 
+                    search,
+                    incluirInactivos
+                );
 
                 return JsonSuccess("Categorías obtenidas exitosamente", new
                 {
@@ -142,6 +148,37 @@ namespace Zenith_Inventory.Controllers.Catalogos
             catch (Exception ex)
             {
                 return JsonError("Error al eliminar categoría", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Reactiva una categoría previamente desactivada (borrado lógico)
+        /// </summary>
+        [HttpPost]
+        [PermissionFilter("CATEGORIAS", "ACTUALIZAR")]
+        public JsonResult ReactivarCategoria(int id)
+        {
+            try
+            {
+                string usuarioModificacion = ObtenerUsernameSesion();
+                bool resultado = _negocioCategoria.ReactivarCategoria(id, usuarioModificacion);
+
+                if (resultado)
+                {
+                    return JsonSuccess("Categoría reactivada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo reactivar la categoría", "La operación no se completó");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al reactivar categoría", ex.Message);
             }
         }
 

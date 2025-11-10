@@ -16,7 +16,7 @@ namespace CapaNegocio.Categoria
             _datosCategoria = new CD_Categoria();
         }
 
-        public CE_PagedResult<CE_CategoriaListDTO> ObtenerCategoriasPaginadas(int pageNumber, int pageSize, string searchTerm = null)
+        public CE_PagedResult<CE_CategoriaListDTO> ObtenerCategoriasPaginadas(int pageNumber, int pageSize, string searchTerm = null, bool incluirInactivos = false)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace CapaNegocio.Categoria
                     pageNumber,
                     pageSize,
                     searchTerm,
-                    incluirInactivos: false
+                    incluirInactivos
                 );
             }
             catch (ValidationException)
@@ -219,6 +219,61 @@ namespace CapaNegocio.Categoria
             {
                 ErrorLogger.Log(ex, $"Error al eliminar categoría {idCategoria}");
                 throw new BusinessLogicException($"Error al eliminar categoría: {ex.Message}", ex);
+            }
+        }
+
+        public bool ReactivarCategoria(int idCategoria, string usuarioModificacion)
+        {
+            try
+            {
+                if (idCategoria <= 0)
+                    throw new ValidationException("El ID de la categoría debe ser mayor a 0");
+
+                // Verificar que la categoría existe
+                var categoria = _datosCategoria.ObtenerCategoriaPorId(idCategoria);
+                if (categoria == null)
+                    throw new ValidationException("La categoría no existe");
+
+                // ✅ DIAGNÓSTICO: Registrar el estado actual
+                ErrorLogger.LogCustom($"[DIAGNÓSTICO REACTIVAR] ID: {idCategoria}, Activo: {categoria.Activo}, Nombre: {categoria.Nombre}");
+
+                // Verificar que esté inactiva
+                if (categoria.Activo)
+                {
+                    ErrorLogger.LogCustom($"[ERROR REACTIVAR] La categoría {idCategoria} YA está activa. Activo={categoria.Activo}");
+                    throw new ValidationException("La categoría ya está activa");
+                }
+
+                // Obtener IP del contexto web
+                string ipModificacion = CC_ContextoWeb.ObtenerDireccionIP();
+
+                int filasAfectadas = _datosCategoria.ReactivarCategoria(idCategoria, usuarioModificacion, ipModificacion);
+                
+                bool exitoso = (filasAfectadas != 0 || filasAfectadas == -1);
+                
+                if (exitoso)
+                {
+                    ErrorLogger.LogCustom($"Categoría {idCategoria} reactivada exitosamente por {usuarioModificacion}");
+                    return true;
+                }
+                else
+                {
+                    ErrorLogger.LogCustom($"ADVERTENCIA: No se reactivó ninguna fila para categoría {idCategoria}");
+                    return false;
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DataAccessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, $"Error al reactivar categoría {idCategoria}");
+                throw new BusinessLogicException($"Error al reactivar categoría: {ex.Message}", ex);
             }
         }
     }

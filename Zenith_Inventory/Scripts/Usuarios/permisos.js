@@ -894,45 +894,77 @@ function editarPermiso(permisoId) {
 }
 
 function eliminarPermiso(permisoId) {
+    // Validar ID
+    if (!permisoId || permisoId <= 0) {
+        toastr.error('ID de permiso inválido', 'Error');
+        return;
+    }
+
+    // Obtener información del permiso antes de eliminar
+    const $row = $(`tr[data-permiso-id="${permisoId}"]`);
+    const permisoNombre = $row.find('td:first').text().trim() || 'este permiso';
+
     Swal.fire({
-        title: '¿Eliminar permiso?',
-        text: 'Esta acción desactivará el permiso y lo removerá de todos los roles.',
+        title: `¿Eliminar "${permisoNombre}"?`,
+        text: 'Esta acción desactivará el permiso y lo removerá de todos los roles que lo tengan asignado.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: '<i class="fas fa-check me-1"></i>Sí, eliminar',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-trash me-1"></i>Sí, eliminar',
         cancelButtonText: '<i class="fas fa-times me-1"></i>Cancelar',
-        customClass: {
-            confirmButton: 'btn btn-danger',
-            cancelButton: 'btn btn-secondary'
-        },
-        buttonsStyling: false
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            return $.ajax({
                 url: '/Permisos/DeletePermiso',
                 type: 'POST',
                 data: { id: permisoId },
-                success: function (response) {
-                    if (response.success) {
-                        cargarPermisos();
-                        toastr.success(response.message, 'Éxito');
-                    } else {
-                        toastr.error(response.message, 'Error');
-                    }
-                },
-                error: function () {
-                    toastr.error('Error al eliminar el permiso.', 'Error');
+                timeout: 30000
+            }).then(response => {
+                if (response.success) {
+                    return response;
+                } else {
+                    throw new Error(response.message || 'Error al eliminar el permiso');
                 }
+            }).catch(error => {
+                let errorMessage = 'Error al eliminar el permiso';
+                
+                if (error.status === 403) {
+                    errorMessage = 'No tiene permisos para eliminar este permiso';
+                } else if (error.status === 404) {
+                    errorMessage = 'El permiso no existe o ya fue eliminado';
+                } else if (error.status === 409) {
+                    errorMessage = 'No se puede eliminar el permiso porque tiene dependencias activas';
+                } else if (error.responseJSON && error.responseJSON.message) {
+                    errorMessage = error.responseJSON.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                Swal.showValidationMessage(errorMessage);
             });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            const response = result.value;
+            
+            // Recargar tabla
+            cargarPermisos().then(() => {
+                toastr.success(
+                    response.message || 'Permiso eliminado exitosamente',
+                    'Éxito',
+                    {
+                        timeOut: 3000,
+                        progressBar: true
+                    }
+                );
+            });
+
+            console.log('Permiso eliminado:', { permisoId, permisoNombre, response });
         }
     });
 }
-
-// ============================================
-// FUNCIÓN PARA REACTIVAR PERMISO
-// ============================================
 
 function reactivarPermiso(permisoId, permisoNombre) {
     // Validar ID
@@ -941,9 +973,9 @@ function reactivarPermiso(permisoId, permisoNombre) {
         return;
     }
 
-    confirmDialog({
+    Swal.fire({
         title: `¿Reactivar "${permisoNombre}"?`,
-        text: 'Esta acción volverá a activar el permiso y estará disponible para asignación.',
+        text: 'Esta acción volverá a activar el permiso y estará disponible para asignación a roles.',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
@@ -952,7 +984,6 @@ function reactivarPermiso(permisoId, permisoNombre) {
         cancelButtonText: '<i class="fas fa-times me-1"></i>Cancelar',
         showLoaderOnConfirm: true,
         preConfirm: () => {
-            // Retornar la promesa AJAX
             return $.ajax({
                 url: '/Permisos/ReactivarPermiso',
                 type: 'POST',
@@ -983,7 +1014,6 @@ function reactivarPermiso(permisoId, permisoNombre) {
         allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
         if (result.isConfirmed && result.value) {
-            // Éxito
             const response = result.value;
             
             // Recargar tabla
@@ -1012,7 +1042,7 @@ function reactivarPermiso(permisoId, permisoNombre) {
                 }
             });
 
-            devLog('Permiso reactivado:', { permisoId, permisoNombre, response });
+            console.log('Permiso reactivado:', { permisoId, permisoNombre, response });
         }
     });
 }

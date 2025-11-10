@@ -148,6 +148,36 @@ namespace Zenith_Inventory.Controllers.Catalogos
                 return JsonError("Error al eliminar categoría", ex.Message);
             }
         }
+        /// <summary>
+        /// Reactiva una subcategoría previamente desactivada (borrado lógico)
+        /// </summary>
+        [HttpPost]
+        [PermissionFilter("SUB_CATEGORIAS", "ACTUALIZAR")]
+        public JsonResult ReactivarSubCategoria(int id)
+        {
+            try
+            {
+                string usuarioModificacion = ObtenerUsernameSesion();
+                bool resultado = _negocioSubCategoria.ReactivarSubCat(id, usuarioModificacion);
+
+                if (resultado)
+                {
+                    return JsonSuccess("SubCategoría reactivada exitosamente");
+                }
+                else
+                {
+                    return JsonError("No se pudo reactivar la Subcategoría", "La operación no se completó");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al reactivar Subcategoría", ex.Message);
+            }
+        }
         [HttpPost]
         [PermissionFilter("SUB_CATEGORIAS", "CREAR")]
         public JsonResult CreateSubcategoria(string nombre, int idCat, string descripcion, bool activo = true)

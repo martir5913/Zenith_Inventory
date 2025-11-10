@@ -1,8 +1,13 @@
-﻿let currentPage = 1;
+﻿// ============================================
+// GESTIÓN DE SUBCATEGORÍAS - subcategorias.js
+// ============================================
+
+// Variables globales
+let currentPage = 1;
 let pageSize = 10;
 let searchTerm = '';
 let filterCategoryId = '';
-let filterStatus = '';
+let filterStatus = 'activos'; // ✅ CAMBIO: Valor por defecto "activos"
 let isEditMode = false;
 let editSubcategoryId = null;
 
@@ -60,6 +65,20 @@ $(document).ready(function () {
         loadSubcategories();
     });
 
+    // ✅ NUEVO: Event handler para limpiar filtros
+    $('#btnClearFilters').on('click', function () {
+        limpiarFiltros();
+    });
+
+    // ✅ NUEVO: Event handler para refrescar
+    $('#btnRefreshSubcategories').on('click', function () {
+        const icon = $(this).find('i');
+        icon.addClass('fa-spin');
+        loadSubcategories().finally(() => {
+            icon.removeClass('fa-spin');
+        });
+    });
+
     $('#btnAddSubcategory').click(function () {
         resetModal();
         $('#subcategoryModalLabel').text('Agregar Subcategoría');
@@ -87,6 +106,13 @@ $(document).ready(function () {
     $(document).on('click', '.delete-subcategory-btn', function () {
         const subcategoryId = $(this).data('id');
         deleteSubcategory(subcategoryId);
+    });
+
+    // ✅ NUEVO: Event handler para reactivar subcategoría
+    $(document).on('click', '.reactivate-subcategory-btn', function () {
+        const subcategoryId = $(this).data('id');
+        const subcategoryName = $(this).data('nombre');
+        reactivateSubcategory(subcategoryId, subcategoryName);
     });
 
     $(document).on('click', '.view-subcategory-btn', function () {
@@ -301,6 +327,16 @@ function detalleSubCategoria(idSubCat) {
 function loadSubcategories() {
     console.time('loadSubcategories');
     return new Promise((resolve, reject) => {
+        // ✅ Determinar parámetro de estado según filterStatus
+        let estadoParam = null;
+        
+        if (filterStatus === 'activos') {
+            estadoParam = true;  // Solo activos
+        } else if (filterStatus === 'inactivos') {
+            estadoParam = false; // Solo inactivos (ahora se filtra en backend)
+        }
+        // Si filterStatus === 'todos', estadoParam = null (todos)
+
         $.ajax({
             url: '/SubCategorias/GetSubcategorias',
             type: 'GET',
@@ -308,14 +344,27 @@ function loadSubcategories() {
                 page: currentPage,
                 pageSize: pageSize,
                 search: searchTerm,
-                idCategoria: filterCategoryId,
-                activo: filterStatus
+                idCategoria: filterCategoryId || null,
+                activo: estadoParam
             },
             success: function (response) {
                 console.timeEnd('loadSubcategories');
                 if (response.success) {
-                    populateSubcategoriesTable(response.data.items);
-                    populatePagination(response.data.pagination);
+                    let items = response.data.items || [];
+                    let pagination = response.data.pagination;
+                    
+                    // ✅ DIAGNÓSTICO: Ver los valores recibidos
+                    console.log('=== DIAGNÓSTICO FILTRO SUBCATEGORÍAS ===');
+                    console.log('Filtro estado:', filterStatus);
+                    console.log('Parámetro activo enviado:', estadoParam);
+                    console.log('Total items recibidos del backend:', items.length);
+                    console.log('Total registros (paginación):', pagination.totalRecords);
+                    
+                    // ✅ El filtrado ahora se hace en el BACKEND (SQL)
+                    // No es necesario filtrar en el cliente
+                    
+                    populateSubcategoriesTable(items);
+                    populatePagination(pagination);
                     resolve(response);
                 } else {
                     toastr.error(response.message, 'Error');
@@ -336,24 +385,99 @@ function populateSubcategoriesTable(subcategories) {
     tbody.empty();
 
     if (subcategories.length === 0) {
-        tbody.append('<tr><td colspan="7" class="text-center">No se encontraron subcategorías.</td></tr>');
+        // ✅ Mensaje personalizado según el filtro activo
+        let mensaje = 'No se encontraron subcategorías';
+        let icono = 'fas fa-inbox';
+        
+        if (filterStatus === 'inactivos') {
+            mensaje = 'No hay subcategorías inactivas';
+            icono = 'fas fa-check-circle text-success';
+        } else if (searchTerm) {
+            mensaje = `No se encontraron resultados para "${searchTerm}"`;
+            icono = 'fas fa-search';
+        }
+        
+        tbody.html(`
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <i class="${icono} fa-2x mb-3"></i>
+                    <p>${mensaje}</p>
+                </td>
+            </tr>
+        `);
         return;
     }
 
     subcategories.forEach(function (subcategory) {
-        let row = '<tr>' +
-            '<td>' + subcategory.IdSubCategoria + '</td>' +
-            '<td>' + escapeHtml(subcategory.Nombre) + '</td>' +
-            '<td>' + escapeHtml(subcategory.Descripcion || '') + '</td>' +
-            '<td>' + escapeHtml(subcategory.NombreCategoria) + '</td>' +
-            '<td><span class="badge ' + (subcategory.Estado ? 'badge-success' : 'badge-secondary') + '">' + (subcategory.Estado ? 'Activo' : 'Inactivo') + '</span></td>' +
-            '<td class="text-center"><span class="modelos-count">' + subcategory.TotalModelos + '</span></td>' +
-            '<td class="action-buttons">' +
-            '<button class="btn btn-info btn-sm btn-icon-only view-subcategory-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles" data-id="' + subcategory.IdSubCategoria + '"><i class="fas fa-eye"></i></button> ' +
-            '<button class="btn btn-warning btn-sm btn-icon-only edit-subcategory-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" data-id="' + subcategory.IdSubCategoria + '"><i class="fas fa-edit"></i></button> ' +
-            '<button class="btn btn-danger btn-sm btn-icon-only delete-subcategory-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" data-id="' + subcategory.IdSubCategoria + '"><i class="fas fa-trash"></i></button>' +
-            '</td>' +
-            '</tr>';
+        // ✅ Normalizar el valor de Estado a booleano
+        const esActivo = subcategory.Estado === true || subcategory.Estado === 1 || subcategory.Estado === "true" || subcategory.Estado === "True";
+        
+        const estadoBadge = esActivo
+            ? '<span class="badge badge-success">Activo</span>'
+            : '<span class="badge badge-secondary">Inactivo</span>';
+
+        // ✅ Botones de acción según el estado de la subcategoría
+        let botonesAccion = '';
+        
+        if (esActivo) {
+            // Subcategoría activa: botones normales (Ver, Editar, Eliminar)
+            botonesAccion = `
+                <button class="btn btn-info btn-sm btn-icon-only view-subcategory-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Ver detalles" 
+                        data-id="${subcategory.IdSubCategoria}">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-warning btn-sm btn-icon-only edit-subcategory-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Editar" 
+                        data-id="${subcategory.IdSubCategoria}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm btn-icon-only delete-subcategory-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Eliminar" 
+                        data-id="${subcategory.IdSubCategoria}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+        } else {
+            // Subcategoría inactiva: solo botón de ver y reactivar
+            botonesAccion = `
+                <button class="btn btn-info btn-sm btn-icon-only view-subcategory-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Ver detalles" 
+                        data-id="${subcategory.IdSubCategoria}">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm btn-icon-only reactivate-subcategory-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Reactivar subcategoría" 
+                        data-id="${subcategory.IdSubCategoria}"
+                        data-nombre="${escapeHtml(subcategory.Nombre)}">
+                    <i class="fas fa-undo"></i>
+                </button>
+            `;
+        }
+
+        let row = `
+            <tr data-subcategory-id="${subcategory.IdSubCategoria}" class="${!esActivo ? 'table-secondary' : ''}">
+                <td>${subcategory.IdSubCategoria}</td>
+                <td>${escapeHtml(subcategory.Nombre)}</td>
+                <td>${escapeHtml(subcategory.Descripcion || '')}</td>
+                <td>${escapeHtml(subcategory.NombreCategoria)}</td>
+                <td>${estadoBadge}</td>
+                <td class="text-center"><span class="modelos-count">${subcategory.TotalModelos}</span></td>
+                <td class="action-buttons">
+                    ${botonesAccion}
+                </td>
+            </tr>
+        `;
         tbody.append(row);
     });
 
@@ -424,8 +548,8 @@ function saveSubcategory() {
     }
 
     const url = isEditMode ? '/SubCategorias/UpdateSubCategoria' : '/SubCategorias/CreateSubcategoria';
-    const data = isEditMode ?
-        { id: editSubcategoryId, nombre: name, idCategoria: categoryId, descripcion: description, activo: active } :
+    const data = isEditMode ? 
+        { id: editSubcategoryId, nombre: name, idCategoria: categoryId, descripcion: description, activo: active } : 
         { nombre: name, idCat: categoryId, descripcion: description, activo: active };
 
     $.ajax({
@@ -519,8 +643,120 @@ function deleteSubcategory(subcategoryId) {
     });
 }
 
-function viewSubcategoryDetails(subcategoryId) {
-    detalleSubCategoria(subcategoryId);
+// ============================================
+// ✅ NUEVA FUNCIÓN: REACTIVAR SUBCATEGORÍA
+// ============================================
+function reactivateSubcategory(subcategoryId, subcategoryName) {
+    // Validar ID
+    if (!subcategoryId || subcategoryId <= 0) {
+        toastr.error('ID de subcategoría inválido', 'Error');
+        return;
+    }
+
+    Swal.fire({
+        title: `¿Reactivar "${subcategoryName}"?`,
+        text: 'Esta acción volverá a activar la subcategoría.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-undo me-1"></i>Sí, reactivar',
+        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            return $.ajax({
+                url: '/SubCategorias/ReactivarSubCategoria',
+                type: 'POST',
+                data: { id: subcategoryId },
+                timeout: 30000
+            }).then(response => {
+                if (response.success) {
+                    return response;
+                } else {
+                    throw new Error(response.message || 'Error al reactivar la subcategoría');
+                }
+            }).catch(error => {
+                let errorMessage = 'Error al reactivar la subcategoría';
+                
+                if (error.status === 403) {
+                    errorMessage = 'No tiene permisos para reactivar esta subcategoría';
+                } else if (error.status === 404) {
+                    errorMessage = 'La subcategoría no existe';
+                } else if (error.responseJSON && error.responseJSON.message) {
+                    errorMessage = error.responseJSON.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                Swal.showValidationMessage(errorMessage);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            const response = result.value;
+            
+            // Recargar tabla
+            loadSubcategories().then(() => {
+                toastr.success(
+                    response.message || 'Subcategoría reactivada exitosamente',
+                    'Éxito',
+                    {
+                        timeOut: 3000,
+                        progressBar: true
+                    }
+                );
+                
+                // Si el filtro es "inactivos", al reactivar debería desaparecer de la lista
+                // Si es "todos", se debe actualizar el estado visualmente
+                if (filterStatus !== 'inactivos') {
+                    setTimeout(() => {
+                        const $row = $(`tr[data-subcategory-id="${subcategoryId}"]`);
+                        if ($row.length > 0) {
+                            $row.removeClass('table-secondary').addClass('table-success');
+                            setTimeout(() => {
+                                $row.removeClass('table-success');
+                            }, 2000);
+                        }
+                    }, 500);
+                }
+            });
+
+            console.log('Subcategoría reactivada:', { subcategoryId, subcategoryName, response });
+        }
+    });
+}
+
+// ============================================
+// ✅ NUEVA FUNCIÓN: LIMPIAR FILTROS
+// ============================================
+function limpiarFiltros() {
+    // Limpiar input de búsqueda
+    $('#searchInput').val('');
+    
+    // Resetear variables globales
+    searchTerm = '';
+    filterCategoryId = '';
+    filterStatus = 'activos';
+    currentPage = 1;
+    
+    // Restablecer selects
+    const filterCategory = $('#filterCategory');
+    if (filterCategory.data('select2')) {
+        filterCategory.val('').trigger('change');
+    } else {
+        filterCategory.val('');
+    }
+    
+    $('#filterStatus').val('activos');
+    
+    // Mostrar notificación
+    toastr.info('Filtros restablecidos. Mostrando todas las subcategorías activas.', 'Filtros Limpiados', {
+        timeOut: 2000
+    });
+    
+    // Recargar subcategorías
+    loadSubcategories();
 }
 
 function escapeHtml(text) {
