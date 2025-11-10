@@ -1,0 +1,73 @@
+@{
+    ViewBag.Title = "Gestión de Usuarios";
+}
+
+@section Styles {
+    <link href="~/Content/css/Usuarios/usuarios.css" rel="stylesheet" />
+}
+
+<div class="container-fluid px-4">
+    <h2 class="page-title-custom mb-4">
+        <i class="fas fa-users me-2"></i>@ViewBag.Title
+    </h2>
+
+    <!-- Gestión de Usuarios -->
+    <div class="search-container mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por usuario, nombre, correo..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select id="filterStatus" class="form-control">
+                    <option value="activos">Solo Activos</option>
+                    <option value="todos">Todos</option>
+                    <option value="inactivos">Solo Inactivos</option>
+                    <option value="bloqueados">Solo Bloqueados</option>
+                </select>
+            </div>
+            <div class="col-md-3 text-end">
+                <button id="btnAddUser" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Nuevo Usuario
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Correo</th>
+                        <th>Departamento</th>
+                        <th class="text-center">Estado</th>
+                        <th>Roles</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usersBody">
+                    <!-- Users will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="paginationContainer" class="d-flex justify-content-center mt-3">
+            <!-- Pagination will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Modales de Usuarios (mantener los existentes) -->
+<!-- ... existing modal code ... -->
+
+@section Scripts {
+    <script src="~/Scripts/Usuarios/usuarios.js"></script>
+}

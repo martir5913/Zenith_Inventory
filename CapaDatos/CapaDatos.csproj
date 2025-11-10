@@ -47,6 +47,8 @@
     <Compile Include="CD_Configuracion.cs" />
     <Compile Include="CD_Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Usuario\CD_Permiso.cs" />
+    <Compile Include="Usuario\CD_UsuarioGestion.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CapaComun\CapaComun.csproj">

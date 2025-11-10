@@ -63,6 +63,16 @@
     <Compile Include="DTOs\CE_LoginResponse.cs" />
     <Compile Include="CE_Usuario.cs" />
     <Compile Include="DTOs\Common\CE_PagedResult.cs" />
+    <Compile Include="DTOs\Usuario\CE_PermisoCreateDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_PermisoDetalleDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_PermisoListDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_PermisoUpdateDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_RolListDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_UsuarioCreateDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_UsuarioDetalleDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_UsuarioListDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_UsuarioOperacionesDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_UsuarioUpdateDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

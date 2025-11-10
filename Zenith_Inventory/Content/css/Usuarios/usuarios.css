@@ -1,0 +1,1152 @@
+/* Zenith Inventory - Users View Styles */
+
+/* ========================================
+   TABS SYSTEM - MEJORADO
+   ======================================== */
+.custom-tabs {
+    border-bottom: none;
+    margin-bottom: 0;
+    background: var(--gray-100);
+    padding: 0.5rem 1rem 0;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.custom-tabs .nav-link {
+    color: var(--gray-600);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    background: transparent;
+    margin: 0 0.25rem;
+    position: relative;
+    border-bottom: 3px solid transparent;
+}
+
+.custom-tabs .nav-link:hover:not(.disabled) {
+    color: var(--primary-blue);
+    background: rgba(0, 102, 204, 0.08);
+    transform: translateY(-2px);
+}
+
+.custom-tabs .nav-link.active {
+    color: var(--primary-blue);
+    background: var(--primary-white);
+    border-bottom: 3px solid var(--primary-blue);
+    box-shadow: 0 -2px 8px rgba(0, 102, 204, 0.15);
+    transform: translateY(0);
+}
+
+.custom-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-blue);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.custom-tabs .nav-link.disabled {
+    color: var(--gray-400);
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: var(--gray-200);
+}
+
+.custom-tabs .nav-link i {
+    font-size: 16px;
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.custom-tabs .nav-link.active i {
+    transform: scale(1.1);
+}
+
+/* Tab Content Container */
+.tab-content {
+    background: var(--primary-white);
+    border-radius: 0 0 8px 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-height: 400px;
+}
+
+.tab-pane {
+    display: none !important;
+}
+
+.tab-pane.show.active {
+    display: block !important;
+}
+
+.tab-pane.active {
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure proper stacking */
+.tab-content > .tab-pane {
+    position: relative;
+    z-index: 1;
+}
+
+.tab-content > .tab-pane.active {
+    z-index: 2;
+}
+
+/* ========================================
+   TABLE STYLES - ALTURA OPTIMIZADA
+   ======================================== */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background-color: var(--primary-white);
+    margin-bottom: 0;
+}
+
+.table th {
+    vertical-align: middle;
+    background-color: var(--primary-dark);
+    color: var(--primary-white);
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 0.85rem 0.6rem;
+    white-space: nowrap;
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--primary-blue);
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: var(--gray-200);
+    padding: 0.65rem 0.6rem;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+    height: 50px;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 102, 204, 0.05);
+    cursor: pointer;
+    transform: translateX(2px);
+}
+
+/* Columnas específicas con ancho optimizado */
+.table th:first-child,
+.table td:first-child {
+    width: 80px;
+    text-align: center;
+}
+
+.table th:last-child,
+.table td:last-child {
+    width: 180px;
+    text-align: center;
+}
+
+/* ========================================
+   ROLES TABLE - COLUMNAS ESPECÍFICAS
+   ======================================== */
+#rolesTable td:first-child {
+    max-width: 280px;
+    min-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+}
+
+#rolesTable td:nth-child(2) {
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Contenedor de nombre con icono */
+#rolesTable td:first-child strong {
+    display: inline-block;
+    max-width: calc(100% - 30px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+#rolesTable td:first-child i {
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+/* Tooltip para nombres largos */
+#rolesTable td[title] {
+    cursor: help;
+}
+
+/* Ancho de columnas de tabla de roles */
+#rolesTable th:nth-child(1) {
+    width: 25%;
+    min-width: 200px;
+}
+
+#rolesTable th:nth-child(2) {
+    width: 30%;
+    min-width: 250px;
+}
+
+#rolesTable th:nth-child(3),
+#rolesTable th:nth-child(4) {
+    width: 10%;
+    min-width: 80px;
+}
+
+#rolesTable th:nth-child(5) {
+    width: 12%;
+    min-width: 100px;
+}
+
+#rolesTable th:nth-child(6) {
+    width: 13%;
+    min-width: 120px;
+}
+
+/* ========================================
+   BADGES - COMPACTOS
+   ======================================== */
+.badge {
+    font-size: 0.7em;
+    padding: 0.3em 0.6em;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: var(--success);
+    color: var(--primary-white);
+}
+
+.badge-secondary {
+    background-color: var(--gray-500);
+    color: var(--primary-white);
+}
+
+.badge-info {
+    background-color: var(--info);
+    color: var(--primary-white);
+}
+
+.badge-warning {
+    background-color: var(--warning);
+    color: var(--gray-800);
+}
+
+.badge-danger {
+    background-color: var(--danger);
+    color: var(--primary-white);
+}
+
+.badge-estado {
+    padding: 0.35rem 0.7rem;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-estado.activo {
+    background: var(--success);
+    color: var(--primary-white);
+}
+
+.badge-estado.bloqueado {
+    background: var(--danger);
+    color: var(--primary-white);
+}
+
+.badge-estado.inactivo {
+    background: var(--gray-400);
+    color: var(--primary-white);
+}
+
+/* ========================================
+   BUTTONS - COMPACTOS
+   ======================================== */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all var(--transition-speed);
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-blue-light);
+    border-color: var(--accent-blue-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+}
+
+.btn-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-warning {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: var(--gray-800);
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--gray-400);
+    border-color: var(--gray-400);
+}
+
+.btn-secondary:hover {
+    background-color: var(--gray-500);
+    border-color: var(--gray-500);
+}
+
+.btn-info {
+    background-color: var(--info);
+    border-color: var(--info);
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    transform: translateY(-1px);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn i {
+    font-size: 0.9rem;
+}
+
+/* Action Buttons - COMPACTOS */
+.action-buttons {
+    display: flex;
+    gap: 0.35rem;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.btn-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.btn-action i {
+    font-size: 0.85rem;
+}
+
+.btn-icon-only {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+.btn-icon-only i {
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   FORM CONTROLS
+   ======================================== */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid var(--gray-300);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 13px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin: 0;
+}
+
+.form-check-label {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ========================================
+   CONTAINERS
+   ======================================== */
+.container {
+    max-width: 1200px;
+}
+
+.page-title-custom {
+    color: var(--primary-dark);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+}
+
+.search-container {
+    background-color: var(--gray-50);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-200);
+}
+
+.table-container {
+    background-color: var(--primary-white);
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    color: var(--primary-white);
+    border-bottom: 1px solid var(--gray-300);
+    border-radius: 10px 10px 0 0;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    background-color: var(--gray-50);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--gray-200);
+    border-radius: 0 0 10px 10px;
+    background-color: var(--primary-white);
+}
+
+/* Modal Detail Header */
+.detail-modal-header {
+    background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+    color: #ffffff;
+    padding: 1.5rem;
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.detail-icon-box {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.detail-subtitle-header {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.btn-close-custom {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    padding: 0;
+}
+
+.btn-close-custom:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.btn-close-custom i {
+    font-size: 16px;
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+.pagination .page-link {
+    color: var(--primary-blue) !important;
+    border-color: var(--gray-300) !important;
+    border-radius: 6px !important;
+    margin: 0 2px !important;
+    transition: all var(--transition-speed) !important;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 13px !important;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: var(--primary-white) !important;
+    transform: translateY(-2px);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: var(--primary-white) !important;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ========================================
+   FORM SECTIONS
+   ======================================== */
+.form-section {
+    background: var(--primary-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.form-section-title {
+    color: var(--primary-dark);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-blue);
+}
+
+/* ========================================
+   ROLES CHECKBOXES
+   ======================================== */
+.roles-checkbox-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+}
+
+.roles-checkbox-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.roles-checkbox-container::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 4px;
+}
+
+.roles-checkbox-container::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 4px;
+}
+
+.roles-checkbox-container::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-500);
+}
+
+.role-checkbox-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--primary-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    transition: all var(--transition-speed);
+}
+
+.role-checkbox-item:hover {
+    border-color: var(--primary-blue);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+.role-checkbox-item .form-check {
+    margin: 0;
+}
+
+.role-checkbox-item .form-check-input:checked ~ .form-check-label {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.role-description {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-left: 1.75rem;
+    margin-top: 0.25rem;
+}
+
+/* ========================================
+   ROLES LIST DISPLAY
+   ======================================== */
+.roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.role-badge {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    color: var(--primary-white);
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+.role-badge i {
+    font-size: 12px;
+}
+
+.no-roles {
+    color: var(--gray-600);
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+    background: var(--gray-50);
+}
+
+/* ========================================
+   COUNTERS - COMPACTOS
+   ======================================== */
+.counter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 0.4rem;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--primary-blue);
+    color: var(--primary-white);
+}
+
+.counter-badge.sm {
+    min-width: 22px;
+    height: 22px;
+    font-size: 10px;
+}
+
+.counter-badge.bg-success {
+    background: var(--success);
+}
+
+/* ========================================
+   STATUS BADGES
+   ======================================== */
+.status-badge-large {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-badge-large[data-estado="Activo"] {
+    background: var(--success);
+    color: var(--primary-white);
+}
+
+.status-badge-large[data-estado="Bloqueado"] {
+    background: var(--danger);
+    color: var(--primary-white);
+}
+
+.status-badge-large[data-estado="Inactivo"] {
+    background: var(--gray-400);
+    color: var(--primary-white);
+}
+
+/* ========================================
+   INPUT GROUPS
+   ======================================== */
+.input-group-text {
+    border-radius: 6px 0 0 6px;
+    border-color: var(--gray-300);
+    background: var(--primary-white);
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+}
+
+.input-group .form-control {
+    border-radius: 0 6px 6px 0;
+    border-left: none;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: var(--primary-blue);
+    background-color: var(--gray-50);
+}
+
+/* ========================================
+   ALERT INFO
+   ======================================== */
+.alert-info {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(23, 162, 184, 0.05));
+    border: 1px solid rgba(23, 162, 184, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+/* ========================================
+   ERROR STATES - ACCESO DENEGADO
+   ======================================== */
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.02));
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    animation: fadeInShake 0.5s ease;
+}
+
+.alert-danger .alert-heading {
+    color: var(--danger);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.alert-danger hr {
+    border-color: rgba(220, 53, 69, 0.2);
+    margin: 1.5rem 0;
+}
+
+.alert-danger code {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.alert-danger ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.alert-danger ol li {
+    padding: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.alert-danger ol li strong {
+    color: var(--danger);
+}
+
+@keyframes fadeInShake {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    50% {
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Empty State / Error Icons */
+.text-danger i.fa-shield-exclamation {
+    opacity: 0.8;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Loading State */
+.text-muted i.fa-spinner {
+    color: var(--primary-blue);
+}
+
+/* Warning State */
+.text-warning i.fa-exclamation-triangle {
+    color: var(--warning);
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* Empty State Container */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 2px dashed var(--gray-300);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--gray-400);
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.empty-state h5 {
+    color: var(--gray-700);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+    color: var(--gray-600);
+    margin-bottom: 0;
+}
+
+/* Error Container (consistent with AccessDenied.cshtml) */
+.error-container {
+    padding: 3rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.error-icon {
+    animation: pulse 2s infinite;
+}
+
+/* Pulse animation for icons (consistent with AccessDenied.cshtml) */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.error-container code {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.error-container ol {
+    text-align: left;
+    padding-left: 1.5rem;
+}
+
+.error-container ol li {
+    padding: 0.5rem 0;
+    line-height: 1.6;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    .custom-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.5rem 0.5rem 0;
+    }
+
+    .custom-tabs .nav-link {
+        white-space: nowrap;
+        padding: 0.75rem 1.25rem;
+        margin: 0 0.125rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .btn-icon-only {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0.4rem;
+    }
+    
+    .btn-icon-only i {
+        margin-right: 0.5rem;
+    }
+    
+    .roles-list {
+        flex-direction: column;
+    }
+    
+    .role-badge {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-container .row {
+        gap: 0.75rem;
+    }
+
+    .search-container .col-md-3,
+    .search-container .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Tabla más compacta en móvil */
+    .table th,
+    .table td {
+        padding: 0.4rem 0.3rem;
+        font-size: 12px;
+    }
+
+    .btn-action {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* ========================================
+   LOADING & ANIMATIONS
+   ======================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Alert Customization */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.alert i {
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    transition: width var(--transition-speed), background-color var(--transition-speed);
+}
+
+.password-strength-bar.weak {
+    width: 33%;
+    background: var(--danger);
+}
+
+.password-strength-bar.medium {
+    width: 66%;
+    background: var(--warning);
+}
+
+.password-strength-bar.strong {
+    width: 100%;
+    background: var(--success);
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    border: none;
+}
+
+.toast-header {
+    border-radius: 8px 8px 0 0;
+    background: var(--gray-800);
+    color: var(--primary-white);
+}
+
+.toast-body {
+    padding: 1rem;
+}
+
+.toast.toast-success .toast-header {
+    background: var(--success);
+}
+
+.toast.toast-error .toast-header {
+    background: var(--danger);
+}
+
+.toast.toast-warning .toast-header {
+    background: var(--warning);
+    color: var('--gray-800');
+}
+
+/* Tooltip Customization */
+.tooltip-inner {
+    background: var(--gray-800);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--gray-800);
+}
+
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: var(--gray-800);
+}

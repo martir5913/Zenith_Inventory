@@ -7,6 +7,25 @@
 (function () {
     'use strict';
 
+    // ? PROTECCIÓN GLOBAL: Prevenir inicialización automática de Select2
+    if (typeof $.fn.select2 !== 'undefined') {
+        console.log('? Select2 cargado - Aplicando protección global');
+        
+        // Sobrescribir jQuery para prevenir selección global de inputs
+        const originalOn = $.fn.on;
+        $.fn.on = function(events, selector, data, handler) {
+            // Si es Select2 intentando aplicarse globalmente, bloquear
+            if (typeof events === 'string' && events.includes('select2')) {
+                const element = this.get(0);
+                if (element && element.tagName === 'INPUT') {
+                    console.warn('?? Bloqueada aplicación de Select2 en INPUT:', element.id || element.className);
+                    return this;
+                }
+            }
+            return originalOn.call(this, events, selector, data, handler);
+        };
+    }
+
     // DOM Elements
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
