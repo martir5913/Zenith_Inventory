@@ -116,6 +116,13 @@ $(document).ready(function () {
         eliminarPermiso(permisoId);
     });
 
+    // ✅ NUEVO: Event handler para reactivar permiso
+    $(document).on('click', '.reactivate-permiso-btn', function () {
+        const permisoId = $(this).data('id');
+        const permisoNombre = $(this).data('nombre');
+        reactivarPermiso(permisoId, permisoNombre);
+    });
+
     // Event Handler - Editar desde modal de detalles
     $('#btnEditPermisoFromView').on('click', function () {
         const permisoId = $('#viewPermisoId').text();
@@ -392,8 +399,57 @@ function poblarTablaPermisos(permisos = []) {
                 : permiso.descripcion)
             : '<span class="text-muted">Sin descripción</span>';
 
+        // Botones de acción según el estado del permiso
+        let botonesAccion = '';
+        
+        if (permiso.activo) {
+            // Permiso activo: botones normales (Ver, Editar, Eliminar)
+            botonesAccion = `
+                <button class="btn btn-info btn-sm btn-icon-only view-permiso-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Ver detalles" 
+                        data-id="${permiso.idPermiso}">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-warning btn-sm btn-icon-only edit-permiso-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Editar" 
+                        data-id="${permiso.idPermiso}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm btn-icon-only delete-permiso-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Eliminar" 
+                        data-id="${permiso.idPermiso}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+        } else {
+            // Permiso inactivo: solo botón de ver y reactivar
+            botonesAccion = `
+                <button class="btn btn-info btn-sm btn-icon-only view-permiso-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Ver detalles" 
+                        data-id="${permiso.idPermiso}">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-primary btn-sm btn-icon-only reactivate-permiso-btn" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top"
+                        title="Reactivar permiso" 
+                        data-id="${permiso.idPermiso}"
+                        data-nombre="${escapeHtml(permiso.nombre)}">
+                    <i class="fas fa-undo"></i>
+                </button>
+            `;
+        }
+
         const row = `
-            <tr data-permiso-id="${permiso.idPermiso}">
+            <tr data-permiso-id="${permiso.idPermiso}" class="${!permiso.activo ? 'table-secondary' : ''}">
                 <td>${escapeHtml(permiso.nombre)}</td>
                 <td><span class="badge bg-primary">${escapeHtml(permiso.modulo)}</span></td>
                 <td><span class="badge bg-info">${escapeHtml(permiso.accion)}</span></td>
@@ -403,21 +459,7 @@ function poblarTablaPermisos(permisos = []) {
                 </td>
                 <td class="text-center">${estadoBadge}</td>
                 <td class="action-buttons text-center">
-                    <button class="btn btn-info btn-sm btn-icon-only view-permiso-btn" 
-                            data-bs-toggle="tooltip" title="Ver detalles" 
-                            data-id="${permiso.idPermiso}">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-warning btn-sm btn-icon-only edit-permiso-btn" 
-                            data-bs-toggle="tooltip" title="Editar" 
-                            data-id="${permiso.idPermiso}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm btn-icon-only delete-permiso-btn" 
-                            data-bs-toggle="tooltip" title="Eliminar" 
-                            data-id="${permiso.idPermiso}">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    ${botonesAccion}
                 </td>
             </tr>
         `;
@@ -884,6 +926,93 @@ function eliminarPermiso(permisoId) {
                     toastr.error('Error al eliminar el permiso.', 'Error');
                 }
             });
+        }
+    });
+}
+
+// ============================================
+// FUNCIÓN PARA REACTIVAR PERMISO
+// ============================================
+
+function reactivarPermiso(permisoId, permisoNombre) {
+    // Validar ID
+    if (!permisoId || permisoId <= 0) {
+        toastr.error('ID de permiso inválido', 'Error');
+        return;
+    }
+
+    confirmDialog({
+        title: `¿Reactivar "${permisoNombre}"?`,
+        text: 'Esta acción volverá a activar el permiso y estará disponible para asignación.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-undo me-1"></i>Sí, reactivar',
+        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            // Retornar la promesa AJAX
+            return $.ajax({
+                url: '/Permisos/ReactivarPermiso',
+                type: 'POST',
+                data: { id: permisoId },
+                timeout: 30000
+            }).then(response => {
+                if (response.success) {
+                    return response;
+                } else {
+                    throw new Error(response.message || 'Error al reactivar el permiso');
+                }
+            }).catch(error => {
+                let errorMessage = 'Error al reactivar el permiso';
+                
+                if (error.status === 403) {
+                    errorMessage = 'No tiene permisos para reactivar este permiso';
+                } else if (error.status === 404) {
+                    errorMessage = 'El permiso no existe';
+                } else if (error.responseJSON && error.responseJSON.message) {
+                    errorMessage = error.responseJSON.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                Swal.showValidationMessage(errorMessage);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            // Éxito
+            const response = result.value;
+            
+            // Recargar tabla
+            cargarPermisos().then(() => {
+                toastr.success(
+                    response.message || 'Permiso reactivado exitosamente',
+                    'Éxito',
+                    {
+                        timeOut: 3000,
+                        progressBar: true
+                    }
+                );
+                
+                // Si el filtro es "inactivos", al reactivar debería desaparecer de la lista
+                // Si es "todos", se debe actualizar el estado visualmente
+                if (permisosFilterStatus !== 'inactivos') {
+                    setTimeout(() => {
+                        const $row = $(`tr[data-permiso-id="${permisoId}"]`);
+                        if ($row.length > 0) {
+                            $row.removeClass('table-secondary').addClass('table-success');
+                            setTimeout(() => {
+                                $row.removeClass('table-success');
+                            }, 2000);
+                        }
+                    }, 500);
+                }
+            });
+
+            devLog('Permiso reactivado:', { permisoId, permisoNombre, response });
         }
     });
 }

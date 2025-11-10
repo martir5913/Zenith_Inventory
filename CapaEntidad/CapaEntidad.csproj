@@ -67,7 +67,10 @@
     <Compile Include="DTOs\Usuario\CE_PermisoDetalleDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_PermisoListDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_PermisoUpdateDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_RolCreateDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_RolDetalleDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_RolListDTO.cs" />
+    <Compile Include="DTOs\Usuario\CE_RolUpdateDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_UsuarioCreateDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_UsuarioDetalleDTO.cs" />
     <Compile Include="DTOs\Usuario\CE_UsuarioListDTO.cs" />

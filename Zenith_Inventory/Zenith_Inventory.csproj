@@ -129,6 +129,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Usuarios\PermisosController.cs" />
+    <Compile Include="Controllers\Usuarios\RolesController.cs" />
     <Compile Include="Controllers\Usuarios\UsuariosController.cs" />
     <Compile Include="Filters\AuthenticationFilter.cs" />
     <Compile Include="Filters\PermissionFilter.cs" />
@@ -145,6 +146,7 @@
     <Content Include="Content\css\login.css" />
     <Content Include="Content\css\select2-custom.css" />
     <Content Include="Content\css\Usuarios\permisos.css" />
+    <Content Include="Content\css\Usuarios\roles.css" />
     <Content Include="Content\css\Usuarios\usuarios.css" />
     <Content Include="Content\img\favicon.ico" />
     <Content Include="Content\img\login-hero-bg.jpg" />
@@ -155,6 +157,7 @@
     <Content Include="Content\css\Site.css" />
     <Content Include="Schema\000_schema_v1.sql" />
     <Content Include="Schema\001_SP_ActualesV1.sql" />
+    <Content Include="Schema\002_SP_Roles.sql" />
     <Content Include="Schema\002_SP_Usuarios_Gestion.sql" />
     <Content Include="Schema\Fase1\000_Schema_Base.sql" />
     <Content Include="Schema\Fase1\001_Schema.sql" />
@@ -173,13 +176,17 @@
     <Content Include="Schema\Fase1\012_SP_Modelos_Final.sql" />
     <Content Include="Schema\Fase1\013_Fix_SP_Categorias_RowCount.sql" />
     <Content Include="Schema\Fase1\014_Fix_SP_Subcategorias_RowCount.sql" />
+    <Content Include="Schema\Fase2\Usuario\SP_PERMISOS_REACTIVAR.sql" />
+    <Content Include="Schema\Fase2\Usuario\SP_ROLES_REACTIVAR.sql" />
     <Content Include="Scripts\Catalogos\categorias.js" />
     <Content Include="Scripts\Catalogos\subcategorias.js" />
+    <Content Include="Scripts\errorHandler.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\login.js" />
     <Content Include="Scripts\Usuarios\permisos.js" />
     <Content Include="Scripts\Usuarios\roles.js" />
     <Content Include="Scripts\Usuarios\usuarios.js" />
+    <Content Include="Scripts\utilities.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -212,6 +219,7 @@
     <Content Include="Views\SubCategorias\Index.cshtml" />
     <Content Include="Views\Usuarios\Index.cshtml" />
     <Content Include="Views\Permisos\Index.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CapaComun\CapaComun.csproj">

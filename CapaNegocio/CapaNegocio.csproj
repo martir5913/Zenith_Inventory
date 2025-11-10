@@ -49,6 +49,7 @@
     <Compile Include="CN_Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario\CN_Permiso.cs" />
+    <Compile Include="Usuario\CN_Rol.cs" />
     <Compile Include="Usuario\CN_UsuarioGestion.cs" />
   </ItemGroup>
   <ItemGroup>

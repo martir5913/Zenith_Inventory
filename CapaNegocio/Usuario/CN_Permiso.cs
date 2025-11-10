@@ -236,6 +236,60 @@ namespace CapaNegocio.Usuario
         }
 
         /// <summary>
+        /// Reactiva un permiso previamente desactivado (borrado lógico)
+        /// </summary>
+        public bool ReactivarPermiso(int idPermiso, string usuarioModificacion)
+        {
+            try
+            {
+                if (idPermiso <= 0)
+                    throw new ValidationException("El ID del permiso debe ser mayor a 0");
+
+                // Verificar que el permiso existe
+                var permiso = _datosPermiso.ObtenerPermisoPorId(idPermiso);
+                if (permiso == null)
+                    throw new ValidationException("El permiso no existe");
+
+                // Verificar que esté inactivo
+                if (permiso.Activo)
+                {
+                    throw new ValidationException("El permiso ya está activo");
+                }
+
+                // Obtener IP del contexto web
+                string ipModificacion = CC_ContextoWeb.ObtenerDireccionIP();
+
+                int filasAfectadas = _datosPermiso.ReactivarPermiso(idPermiso, usuarioModificacion, ipModificacion);
+
+                bool exitoso = (filasAfectadas != 0 || filasAfectadas == -1);
+
+                if (exitoso)
+                {
+                    ErrorLogger.LogCustom($"Permiso {idPermiso} reactivado exitosamente por {usuarioModificacion}");
+                    return true;
+                }
+                else
+                {
+                    ErrorLogger.LogCustom($"ADVERTENCIA: No se reactivó ninguna fila para permiso {idPermiso}");
+                    return false;
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DataAccessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, $"Error al reactivar permiso {idPermiso}");
+                throw new BusinessLogicException($"Error al reactivar permiso: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
         /// Obtiene lista de módulos disponibles en el sistema
         /// </summary>
         public List<string> ObtenerModulosDisponibles()

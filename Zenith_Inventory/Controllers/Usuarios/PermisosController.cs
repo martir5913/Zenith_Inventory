@@ -286,6 +286,41 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
+        /// <summary>
+        /// Reactiva un permiso previamente desactivado (borrado lógico)
+        /// </summary>
+        [HttpPost]
+        [PermissionFilter("PERMISOS", "ACTUALIZAR")]
+        public JsonResult ReactivarPermiso(int id)
+        {
+            try
+            {
+                string usuarioModificacion = ObtenerUsernameSesion();
+                bool exitoso = _negocioPermiso.ReactivarPermiso(id, usuarioModificacion);
+
+                if (exitoso)
+                {
+                    return JsonSuccess("Permiso reactivado exitosamente", new { idPermiso = id });
+                }
+                else
+                {
+                    return JsonError("No se pudo reactivar el permiso", "No se afectó ningún registro");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return JsonError("Error de validación", ex.Message);
+            }
+            catch (DataAccessException ex)
+            {
+                return JsonError("Error de base de datos", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return JsonError("Error al reactivar permiso", ex.Message);
+            }
+        }
+
         #endregion
 
         #region Métodos Helper para Catálogos
