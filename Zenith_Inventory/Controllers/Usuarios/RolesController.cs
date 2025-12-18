@@ -9,10 +9,6 @@ using Zenith_Inventory.Filters;
 
 namespace Zenith_Inventory.Controllers.Usuarios
 {
-    /// <summary>
-    /// Controlador para la gestión de Roles
-    /// Patrón: Similar a PermisosController
-    /// </summary>
     [AuthenticationFilter]
     public class RolesController : BaseController
     {
@@ -25,7 +21,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             _cnPermiso = new CN_Permiso();
         }
 
-        // GET: Roles
         [PermissionFilter("ROLES", "LEER")]
         public ActionResult Index()
         {
@@ -34,9 +29,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region AJAX ENDPOINTS
 
-        /// <summary>
-        /// Obtiene el listado paginado de roles
-        /// </summary>
         [HttpGet]
         [PermissionFilter("ROLES", "LEER")]
         public JsonResult GetRoles(
@@ -47,7 +39,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
         {
             try
             {
-                // ✅ FIX: Recibir CE_PagedResult en lugar de tupla
                 var result = _cnRol.ListarRoles(page, pageSize, search, incluirInactivos);
 
                 return Json(new
@@ -81,9 +72,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene los detalles de un rol por ID
-        /// </summary>
         [HttpGet]
         [PermissionFilter("ROLES", "LEER")]
         public JsonResult GetRolPorId(int id)
@@ -121,9 +109,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Crea un nuevo rol
-        /// </summary>
         [HttpPost]
         [PermissionFilter("ROLES", "CREAR")]
         public JsonResult CrearRol(CE_RolCreateDTO dto)
@@ -174,9 +159,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Actualiza un rol existente
-        /// </summary>
         [HttpPost]
         [PermissionFilter("ROLES", "ACTUALIZAR")]
         public JsonResult ActualizarRol(CE_RolUpdateDTO dto)
@@ -236,9 +218,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Elimina (desactiva) un rol
-        /// </summary>
         [HttpPost]
         [PermissionFilter("ROLES", "ELIMINAR")]
         public JsonResult EliminarRol(int id)
@@ -288,9 +267,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Reactiva un rol previamente eliminado (borrado lógico)
-        /// </summary>
         [HttpPost]
         [PermissionFilter("ROLES", "ACTUALIZAR")]
         public JsonResult ReactivarRol(int id)
@@ -331,9 +307,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Asigna permisos a un rol
-        /// </summary>
         [HttpPost]
         [PermissionFilter("ROLES", "ACTUALIZAR")]
         public JsonResult AsignarPermisos(int idRol, List<int> permisosIds)
@@ -373,19 +346,15 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene todos los permisos disponibles para asignar a un rol
-        /// </summary>
         [HttpGet]
         [PermissionFilter("ROLES", "LEER")]
         public JsonResult GetPermisosDisponibles()
         {
             try
             {
-                // ✅ FIX: Usar el método correcto de CN_Permiso
                 var result = _cnPermiso.ObtenerPermisosPaginados(
                     pageNumber: 1,
-                    pageSize: 1000, // Obtener todos los permisos activos
+                    pageSize: 1000,
                     incluirInactivos: false
                 );
 
@@ -393,7 +362,7 @@ namespace Zenith_Inventory.Controllers.Usuarios
                 {
                     success = true,
                     message = "Permisos obtenidos exitosamente",
-                    data = result.Items // ✅ FIX: Usar result.Items en lugar de permisos
+                    data = result.Items
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -408,10 +377,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene la matriz de permisos para mostrar en el modal de detalles
-        /// Agrupa los permisos por módulo y acción para una visualización tipo tabla
-        /// </summary>
         [HttpGet]
         [PermissionFilter("ROLES", "LEER")]
         public JsonResult GetPermisosMatriz(int idRol)

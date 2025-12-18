@@ -9,9 +9,6 @@ using Zenith_Inventory.Filters;
 
 namespace Zenith_Inventory.Controllers.Usuarios
 {
-    /// <summary>
-    /// Controlador para gestión de permisos del sistema
-    /// </summary>
     [AuthenticationFilter]
     public class PermisosController : BaseController
     {
@@ -24,9 +21,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Vistas Principales
 
-        /// <summary>
-        /// Vista principal de gestión de permisos
-        /// </summary>
         [PermissionFilter("PERMISOS", "LEER")]
         public ActionResult Index(int page = 1, string search = null, string modulo = null)
         {
@@ -34,9 +28,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             return View();
         }
 
-        /// <summary>
-        /// Vista de detalle de permiso
-        /// </summary>
         [PermissionFilter("PERMISOS", "LEER")]
         public ActionResult Detalle(int id)
         {
@@ -49,9 +40,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Operaciones CRUD de Permisos
 
-        /// <summary>
-        /// Obtiene permisos paginados con filtros
-        /// </summary>
         [HttpGet]
         [PermissionFilter("PERMISOS", "LEER")]
         public JsonResult GetPermisos(
@@ -60,7 +48,7 @@ namespace Zenith_Inventory.Controllers.Usuarios
             string search = null,
             bool incluirInactivos = false,
             string modulo = null,
-            string accion = null)  // ? AGREGADO
+            string accion = null)
         {
             try
             {
@@ -70,7 +58,7 @@ namespace Zenith_Inventory.Controllers.Usuarios
                     search,
                     incluirInactivos,
                     modulo,
-                    accion  // ? AGREGADO
+                    accion
                 );
 
                 return JsonSuccess("Permisos obtenidos exitosamente", new
@@ -106,9 +94,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene detalle completo de un permiso
-        /// </summary>
         [HttpGet]
         [PermissionFilter("PERMISOS", "LEER")]
         public JsonResult GetPermisoDetalle(int id)
@@ -156,9 +141,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Crea un nuevo permiso
-        /// </summary>
         [HttpPost]
         [PermissionFilter("PERMISOS", "CREAR")]
         public JsonResult CreatePermiso(CE_PermisoCreateDTO permiso)
@@ -200,9 +182,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Actualiza un permiso existente
-        /// </summary>
         [HttpPost]
         [PermissionFilter("PERMISOS", "ACTUALIZAR")]
         public JsonResult UpdatePermiso(CE_PermisoUpdateDTO permiso)
@@ -251,9 +230,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Elimina (desactiva) un permiso
-        /// </summary>
         [HttpPost]
         [PermissionFilter("PERMISOS", "ELIMINAR")]
         public JsonResult DeletePermiso(int id)
@@ -286,9 +262,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Reactiva un permiso previamente desactivado (borrado lógico)
-        /// </summary>
         [HttpPost]
         [PermissionFilter("PERMISOS", "ACTUALIZAR")]
         public JsonResult ReactivarPermiso(int id)
@@ -325,9 +298,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Métodos Helper para Catálogos
 
-        /// <summary>
-        /// Obtiene lista de módulos disponibles en el sistema
-        /// </summary>
         [HttpGet]
         [PermissionFilter("PERMISOS", "LEER")]
         public JsonResult GetModulosDisponibles()
@@ -351,9 +321,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene lista de acciones disponibles en el sistema
-        /// </summary>
         [HttpGet]
         [PermissionFilter("PERMISOS", "LEER")]
         public JsonResult GetAccionesDisponibles()
@@ -377,9 +344,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene catálogo completo de módulos y acciones del sistema
-        /// </summary>
         [HttpGet]
         [PermissionFilter("PERMISOS", "LEER")]
         public JsonResult GetCatalogos()

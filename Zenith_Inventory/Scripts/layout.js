@@ -155,16 +155,24 @@
                     link.classList.add('active');
                     matchFound = true;
 
-                    // Expand parent submenu
-                    const submenu = link.closest('.submenu');
-                    if (submenu) {
-                        submenu.classList.add('show');
+                    // Expand ALL parent submenus (including nested ones)
+                    let currentElement = link;
+                    while (currentElement) {
+                        const submenu = currentElement.closest('.submenu');
+                        if (submenu) {
+                            submenu.classList.add('show');
 
-                        // Mark parent nav-link as active
-                        const parentLink = submenu.previousElementSibling;
-                        if (parentLink) {
-                            parentLink.classList.add('active');
-                            parentLink.setAttribute('aria-expanded', 'true');
+                            // Mark parent nav-link as active
+                            const parentLink = submenu.previousElementSibling;
+                            if (parentLink) {
+                                parentLink.classList.add('active');
+                                parentLink.setAttribute('aria-expanded', 'true');
+                            }
+
+                            // Continue up the tree to find nested parent submenus
+                            currentElement = submenu.parentElement;
+                        } else {
+                            break;
                         }
                     }
 
@@ -244,7 +252,7 @@
     }
 
     // ========================================
-    // HANDLE SUBMENU CLICKS - Only one open at a time with smooth transitions
+    // HANDLE SUBMENU CLICKS - Support for nested submenus
     // ========================================
     navLinks.forEach(link => {
         link.addEventListener('click', function (e) {
@@ -262,42 +270,56 @@
                     // Check if this submenu is currently open
                     const isCurrentlyOpen = submenu.classList.contains('show');
 
-                    // Get all submenus
-                    const allSubmenus = document.querySelectorAll('.submenu');
+                    // Check if this is a nested submenu (has a parent submenu)
+                    const isNested = link.closest('.submenu') !== null;
 
-                    // If we're opening a different submenu, close others with animation
-                    if (!isCurrentlyOpen) {
-                        let hasOpenSubmenu = false;
+                    if (!isNested) {
+                        // This is a top-level submenu - close other top-level submenus
+                        if (!isCurrentlyOpen) {
+                            let hasOpenSubmenu = false;
 
-                        allSubmenus.forEach(menu => {
-                            if (menu !== submenu && menu.classList.contains('show')) {
-                                hasOpenSubmenu = true;
-                                // Remove show class to trigger close animation
-                                menu.classList.remove('show');
+                            // Only close top-level submenus that are siblings
+                            const allTopLevelSubmenus = document.querySelectorAll('.sidebar-nav > .nav-list > .nav-item > .submenu');
 
-                                // Update parent link aria-expanded
-                                const parentLink = menu.previousElementSibling;
-                                if (parentLink) {
-                                    parentLink.setAttribute('aria-expanded', 'false');
+                            allTopLevelSubmenus.forEach(menu => {
+                                if (menu !== submenu && menu.classList.contains('show')) {
+                                    hasOpenSubmenu = true;
+                                    // Remove show class to trigger close animation
+                                    menu.classList.remove('show');
+
+                                    // Update parent link aria-expanded
+                                    const parentLink = menu.previousElementSibling;
+                                    if (parentLink) {
+                                        parentLink.setAttribute('aria-expanded', 'false');
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        // If there was an open submenu, wait for it to close before opening new one
-                        if (hasOpenSubmenu) {
-                            setTimeout(() => {
+                            // If there was an open submenu, wait for it to close before opening new one
+                            if (hasOpenSubmenu) {
+                                setTimeout(() => {
+                                    submenu.classList.add('show');
+                                    link.setAttribute('aria-expanded', 'true');
+                                }, 150); // Small delay for smooth transition
+                            } else {
+                                // No open submenu, open immediately
                                 submenu.classList.add('show');
                                 link.setAttribute('aria-expanded', 'true');
-                            }, 150); // Small delay for smooth transition
+                            }
                         } else {
-                            // No open submenu, open immediately
+                            // Closing the current submenu
+                            submenu.classList.remove('show');
+                            link.setAttribute('aria-expanded', 'false');
+                        }
+                    } else {
+                        // This is a nested submenu - just toggle it without closing siblings
+                        if (isCurrentlyOpen) {
+                            submenu.classList.remove('show');
+                            link.setAttribute('aria-expanded', 'false');
+                        } else {
                             submenu.classList.add('show');
                             link.setAttribute('aria-expanded', 'true');
                         }
-                    } else {
-                        // Closing the current submenu
-                        submenu.classList.remove('show');
-                        link.setAttribute('aria-expanded', 'false');
                     }
                 }
 
@@ -308,26 +330,27 @@
                         removeOverlay();
                     }, 300);
                 }
-            } else {
-                // Regular link - close all open submenus and mobile menu
-                // Close all open submenus
-                const allSubmenus = document.querySelectorAll('.submenu');
-                allSubmenus.forEach(menu => {
-                    if (menu.classList.contains('show')) {
-                        menu.classList.remove('show');
-                        const parentLink = menu.previousElementSibling;
-                        if (parentLink) {
-                            parentLink.setAttribute('aria-expanded', 'false');
-                        }
-                    }
-                });
-
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('show');
-                    removeOverlay();
-                }
             }
         });
+    });
+
+    // ========================================
+    // HANDLE SUBMENU LINK CLICKS (non-toggle links in submenus)
+    // ========================================
+    document.querySelectorAll('.submenu-link').forEach(link => {
+        // Only add listener if it's NOT a toggle link
+        if (!link.hasAttribute('data-bs-toggle')) {
+            link.addEventListener('click', function(e) {
+                // Don't close parent submenus when clicking nested submenu items
+                // Just close mobile menu if needed
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        sidebar.classList.remove('show');
+                        removeOverlay();
+                    }, 300);
+                }
+            });
+        }
     });
 
     // ========================================

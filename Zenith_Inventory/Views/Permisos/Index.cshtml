@@ -1,22 +1,18 @@
-@{
-    ViewBag.Title = "Gestión de Permisos";
+ï»¿@{
+    ViewBag.Title = "Gestiï¿½n de Permisos";
 }
 
 @section Styles {
     <link href="~/Content/css/Usuarios/usuarios.css" rel="stylesheet" />
-    <link href="~/Content/css/Usuarios/permisos.css" rel="stylesheet" />
+    <link href="~/Content/css/Usuarios/permisos.css" rel="stylesheet" />    
     
-    @* ? Cargar Select2 CSS solo en esta página *@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <link href="~/Content/css/select2-custom.css" rel="stylesheet" />
 }
 
-@section Scripts {
-    @* ? Cargar Select2 JS solo en esta página *@
+@section Scripts {    
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
-    @* ? Script de permisos (que ahora SÍ usará Select2) *@
     <script src="~/Scripts/Usuarios/permisos.js"></script>
 }
 
@@ -25,10 +21,10 @@
         <i class="fas fa-shield-alt me-2"></i>@ViewBag.Title
     </h2>
 
-    <!-- Barra de búsqueda y filtros -->
+    <!-- Barra de bï¿½squeda y filtros -->
     <div class="search-container mb-4">
         <div class="row g-2">
-            <!-- Búsqueda -->
+            <!-- Bï¿½squeda -->
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="input-group">
                     <span class="input-group-text">
@@ -38,19 +34,19 @@
                 </div>
             </div>
             
-            <!-- Filtro Módulo -->
+            <!-- Filtro Mï¿½dulo -->
             <div class="col-6 col-md-3 col-lg-2">
                 <select id="filterPermisosModulo" class="form-control">
-                    <option value="">Todos los módulos</option>
-                    <!-- Módulos se cargarán dinámicamente -->
+                    <option value="">Todos los mï¿½dulos</option>
+                    <!-- Mï¿½dulos se cargarï¿½n dinï¿½micamente -->
                 </select>
             </div>
             
-            <!-- Filtro Acción -->
+            <!-- Filtro Acciï¿½n -->
             <div class="col-6 col-md-3 col-lg-2">
                 <select id="filterPermisosAccion" class="form-control">
                     <option value="">Todas las acciones</option>
-                    <!-- Acciones se cargarán dinámicamente -->
+                    <!-- Acciones se cargarï¿½n dinï¿½micamente -->
                 </select>
             </div>
             
@@ -63,7 +59,7 @@
                 </select>
             </div>
             
-            <!-- Botones de Acción -->
+            <!-- Botones de Acciï¿½n -->
             <div class="col-6 col-md-8 col-lg-2 d-flex justify-content-end gap-2">
                 <button id="btnClearFilters" class="btn btn-outline-warning" title="Limpiar filtros">
                     <i class="fas fa-eraser"></i>
@@ -82,13 +78,13 @@
     <!-- Tabla de permisos -->
     <div class="table-container">
         <div class="table-responsive">
-            <table class="table table-striped table-hover" id="permisosTable">
+            <table class="table-striped table-hover table" id="permisosTable">
                 <thead>
                     <tr>
                         <th style="width: 25%;">Nombre</th>
-                        <th style="width: 15%;">Módulo</th>
-                        <th style="width: 15%;">Acción</th>
-                        <th style="width: 25%;">Descripción</th>
+                        <th style="width: 15%;">Mï¿½dulo</th>
+                        <th style="width: 15%;">Acciï¿½n</th>
+                        <th style="width: 25%;">Descripciï¿½n</th>
                         <th class="text-center" style="width: 8%;">Roles</th>
                         <th class="text-center" style="width: 10%;">Estado</th>
                         <th class="text-center" style="width: 15%;">Acciones</th>
@@ -96,7 +92,7 @@
                 </thead>
                 <tbody id="permisosBody">
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td colspan="7" class="text-muted py-4 text-center">
                             <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
                             <p>Cargando permisos...</p>
                         </td>
@@ -125,7 +121,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <h5 class="modal-title" id="permisoModalLabel">Nuevo Permiso</h5>
-                        <small class="detail-subtitle-header">Complete la información requerida</small>
+                        <small class="detail-subtitle-header">Complete la informaciï¿½n requerida</small>
                     </div>
                 </div>
                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
@@ -143,7 +139,7 @@
                             <label for="permisoNombre" class="form-label">
                                 <i class="fas fa-tag text-primary me-1"></i>Nombre <span class="text-danger">*</span>
                             </label>
-                            <input type="text" id="permisoNombre" class="form-control" placeholder="Ej: Gestión de Inventario" required />
+                            <input type="text" id="permisoNombre" class="form-control" placeholder="Ej: Gestiï¿½n de Inventario" required />
                             <small class="text-muted">Nombre descriptivo del permiso</small>
                         </div>
                     </div>
@@ -151,31 +147,31 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="permisoModulo" class="form-label">
-                                <i class="fas fa-cube text-primary me-1"></i>Módulo <span class="text-danger">*</span>
+                                <i class="fas fa-cube text-primary me-1"></i>Mï¿½dulo <span class="text-danger">*</span>
                             </label>
                             <select id="permisoModulo" class="form-control" required>
-                                <option value="">-- Seleccione un módulo --</option>
-                                <!-- Se llenará dinámicamente -->
+                                <option value="">-- Seleccione un mï¿½dulo --</option>
+                                <!-- Se llenarï¿½ dinï¿½micamente -->
                             </select>
-                            <small class="text-muted">Módulo al que pertenece el permiso</small>
+                            <small class="text-muted">Mï¿½dulo al que pertenece el permiso</small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="permisoAccion" class="form-label">
-                                <i class="fas fa-bolt text-primary me-1"></i>Acción <span class="text-danger">*</span>
+                                <i class="fas fa-bolt text-primary me-1"></i>Acciï¿½n <span class="text-danger">*</span>
                             </label>
                             <select id="permisoAccion" class="form-control" required>
-                                <option value="">-- Seleccione una acción --</option>
-                                <!-- Se llenará dinámicamente -->
+                                <option value="">-- Seleccione una acciï¿½n --</option>
+                                <!-- Se llenarï¿½ dinï¿½micamente -->
                             </select>
-                            <small class="text-muted">Tipo de acción que permite (CREAR, LEER, etc.)</small>
+                            <small class="text-muted">Tipo de acciï¿½n que permite (CREAR, LEER, etc.)</small>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="permisoDescripcion" class="form-label">
-                            <i class="fas fa-align-left text-primary me-1"></i>Descripción
+                            <i class="fas fa-align-left text-primary me-1"></i>Descripciï¿½n
                         </label>
-                        <textarea id="permisoDescripcion" class="form-control" rows="2" placeholder="Descripción opcional del permiso"></textarea>
+                        <textarea id="permisoDescripcion" class="form-control" rows="2" placeholder="Descripciï¿½n opcional del permiso"></textarea>
                     </div>
 
                     <div class="form-check">
@@ -188,7 +184,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="modal-footer border-0 bg-light">
+            <div class="modal-footer bg-light border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i>Cancelar
                 </button>
@@ -214,7 +210,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <h5 class="modal-title mb-0" id="viewPermisoModalLabel">Detalles del Permiso</h5>
-                        <small class="detail-subtitle-header">Información completa del permiso</small>
+                        <small class="detail-subtitle-header">Informaciï¿½n completa del permiso</small>
                     </div>
                 </div>
                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
@@ -224,7 +220,7 @@
 
             <!-- Body -->
             <div class="modal-body p-0">
-                <!-- Información Principal -->
+                <!-- Informaciï¿½n Principal -->
                 <div class="detail-main-info">
                     <div class="row g-0">
                         <div class="col-8">
@@ -238,7 +234,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <label class="detail-field-label">
-                                            <i class="fas fa-cube me-2"></i>Módulo
+                                            <i class="fas fa-cube me-2"></i>Mï¿½dulo
                                         </label>
                                         <p class="detail-field-text mb-0">
                                             <span class="badge bg-primary" id="viewPermisoModulo">--</span>
@@ -246,7 +242,7 @@
                                     </div>
                                     <div class="col-6">
                                         <label class="detail-field-label">
-                                            <i class="fas fa-bolt me-2"></i>Acción
+                                            <i class="fas fa-bolt me-2"></i>Acciï¿½n
                                         </label>
                                         <p class="detail-field-text mb-0">
                                             <span class="badge bg-info" id="viewPermisoAccion">--</span>
@@ -257,7 +253,7 @@
                         </div>
                         <div class="col-4">
                             <div class="detail-status-section">
-                                <label class="detail-field-label text-center d-block mb-2">
+                                <label class="detail-field-label d-block mb-2 text-center">
                                     <i class="fas fa-info-circle me-1"></i>Estado
                                 </label>
                                 <span id="viewPermisoActivo" class="status-badge-large d-block mb-2">--</span>
@@ -267,21 +263,21 @@
                     </div>
                 </div>
 
-                <!-- Descripción -->
+                <!-- Descripciï¿½n -->
                 <div class="detail-description-section">
                     <div class="detail-section-header">
                         <i class="fas fa-align-left me-2"></i>
-                        <span>Descripción</span>
+                        <span>Descripciï¿½n</span>
                     </div>
                     <div class="detail-section-body">
-                        <p class="detail-description-text" id="viewPermisoDescripcion">Sin descripción disponible</p>
+                        <p class="detail-description-text" id="viewPermisoDescripcion">Sin descripciï¿½n disponible</p>
                     </div>
                 </div>
 
                 <!-- Roles que tienen este permiso -->
-                <div class="detail-roles-section p-4 bg-light">
+                <div class="detail-roles-section bg-light p-4">
                     <h6 class="mb-3">
-                        <i class="fas fa-user-shield me-2 text-primary"></i>
+                        <i class="fas fa-user-shield text-primary me-2"></i>
                         Roles con este permiso <span class="badge bg-primary" id="viewPermisoTotalRoles">0</span>
                     </h6>
                     <div id="viewPermisoRolesList" class="roles-list-container">
@@ -289,7 +285,7 @@
                     </div>
                 </div>
 
-                <!-- Auditoría -->
+                <!-- Auditorï¿½a -->
                 <div class="detail-stats-section">
                     <div class="row g-2">
                         <div class="col-6">
@@ -321,7 +317,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="modal-footer border-0 bg-light">
+            <div class="modal-footer bg-light border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i>Cerrar
                 </button>

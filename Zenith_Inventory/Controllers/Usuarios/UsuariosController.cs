@@ -9,9 +9,6 @@ using Zenith_Inventory.Filters;
 
 namespace Zenith_Inventory.Controllers.Usuarios
 {
-    /// <summary>
-    /// Controlador para gestión de usuarios
-    /// </summary>
     [AuthenticationFilter]
     public class UsuariosController : BaseController
     {
@@ -24,9 +21,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Vistas Principales
 
-        /// <summary>
-        /// Vista principal de gestión de usuarios
-        /// </summary>
         [PermissionFilter("USUARIOS", "LEER")]
         public ActionResult Index(int page = 1, string search = null)
         {
@@ -34,9 +28,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             return View();
         }
 
-        /// <summary>
-        /// Vista de detalle de usuario
-        /// </summary>
         [PermissionFilter("USUARIOS", "LEER")]
         public ActionResult Detalle(int id)
         {
@@ -45,9 +36,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             return View();
         }
 
-        /// <summary>
-        /// Vista de gestión de roles
-        /// </summary>
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public ActionResult AsignarRoles(int id)
         {
@@ -60,9 +48,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Operaciones CRUD de Usuarios
 
-        /// <summary>
-        /// Obtiene usuarios paginados con filtros
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "LEER")]
         public JsonResult GetUsuarios(int page = 1, int pageSize = 10, string search = null, bool incluirInactivos = false, bool soloBloqueados = false)
@@ -70,10 +55,10 @@ namespace Zenith_Inventory.Controllers.Usuarios
             try
             {
                 CE_PagedResult<CE_UsuarioListDTO> resultado = _negocioUsuario.ObtenerUsuariosPaginados(
-                    page, 
-                    pageSize, 
-                    search, 
-                    incluirInactivos, 
+                    page,
+                    pageSize,
+                    search,
+                    incluirInactivos,
                     soloBloqueados
                 );
 
@@ -120,9 +105,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene detalle completo de un usuario
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "LEER")]
         public JsonResult GetUsuarioDetalle(int id)
@@ -190,9 +172,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Crea un nuevo usuario
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "CREAR")]
         public JsonResult CreateUsuario(CE_UsuarioCreateDTO usuario)
@@ -231,9 +210,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Actualiza un usuario existente
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult UpdateUsuario(CE_UsuarioUpdateDTO usuario)
@@ -272,9 +248,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Elimina (desactiva) un usuario
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ELIMINAR")]
         public JsonResult DeleteUsuario(int id)
@@ -314,9 +287,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Gestión de Contraseñas
 
-        /// <summary>
-        /// Resetea la contraseña de un usuario (genera temporal)
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult ResetearPassword(int id)
@@ -350,9 +320,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Resetea contraseña con una contraseña específica
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult ResetearPasswordCustom(int id, string nuevaPassword)
@@ -388,9 +355,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Desbloquea un usuario bloqueado
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult DesbloquearUsuario(int id)
@@ -415,9 +379,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Genera una contraseña temporal aleatoria
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult GenerarPasswordTemporal()
@@ -437,9 +398,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Gestión de Roles
 
-        /// <summary>
-        /// Asigna roles a un usuario
-        /// </summary>
         [HttpPost]
         [PermissionFilter("USUARIOS", "ACTUALIZAR")]
         public JsonResult AsignarRoles(int idUsuario, int[] rolesIds)
@@ -475,9 +433,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene todos los roles disponibles
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "LEER")]
         public JsonResult GetRolesDisponibles()
@@ -505,9 +460,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene roles paginados
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "LEER")]
         public JsonResult GetRolesPaginados(int page = 1, int pageSize = 10, string search = null, bool incluirInactivos = false)
@@ -551,9 +503,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
             }
         }
 
-        /// <summary>
-        /// Obtiene los permisos de un rol
-        /// </summary>
         [HttpGet]
         [PermissionFilter("USUARIOS", "LEER")]
         public JsonResult GetPermisosRol(int idRol)
@@ -584,9 +533,6 @@ namespace Zenith_Inventory.Controllers.Usuarios
 
         #region Métodos de Soporte
 
-        /// <summary>
-        /// Valida que el usuario actual no esté intentando modificar su propio estado
-        /// </summary>
         private bool ValidarNoModificarPropio(int idUsuario)
         {
             int usuarioActualId = ObtenerUserIdSesion();

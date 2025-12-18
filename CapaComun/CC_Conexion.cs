@@ -7,18 +7,13 @@ using System.Data.SqlClient;
 
 namespace CapaComun
 {
-    /// <summary>
-    /// Clase para manejo de conexiones y operaciones de base de datos
-    /// </summary>
     public class CC_Conexion
     {
         private readonly string _connectionString;
 
         public CC_Conexion()
         {
-            // Cadena de conexión a la base de datos Portal Milésimo
             _connectionString = ConfigurationManager.ConnectionStrings["PortalMilesimoConnection"].ToString();
-
         }
 
         public CC_Conexion(string connectionString)
@@ -26,21 +21,11 @@ namespace CapaComun
             _connectionString = connectionString;
         }
 
-        /// <summary>
-        /// Obtiene una nueva conexión a la base de datos
-        /// </summary>
-        /// <returns>Conexión SQL</returns>
         public SqlConnection ObtenerConexion()
         {
             return new SqlConnection(_connectionString);
         }
 
-        /// <summary>
-        /// Ejecuta un procedimiento almacenado y devuelve un DataSet
-        /// </summary>
-        /// <param name="nombreProcedimiento">Nombre del procedimiento almacenado</param>
-        /// <param name="parametros">Lista de parámetros</param>
-        /// <returns>DataSet con los resultados</returns>
         public DataSet EjecutarProcedimiento(string nombreProcedimiento, List<SqlParameter> parametros = null)
         {
             DataSet dataSet = new DataSet();
@@ -75,12 +60,6 @@ namespace CapaComun
             return dataSet;
         }
 
-        /// <summary>
-        /// Ejecuta un procedimiento almacenado que no devuelve resultados
-        /// </summary>
-        /// <param name="nombreProcedimiento">Nombre del procedimiento almacenado</param>
-        /// <param name="parametros">Lista de parámetros</param>
-        /// <returns>Número de filas afectadas</returns>
         public int EjecutarProcedimientoSinResultado(string nombreProcedimiento, List<SqlParameter> parametros = null)
         {
             try
@@ -108,14 +87,6 @@ namespace CapaComun
             }
         }
 
-        /// <summary>
-        /// Crea un parámetro SQL
-        /// </summary>
-        /// <param name="nombre">Nombre del parámetro</param>
-        /// <param name="valor">Valor del parámetro</param>
-        /// <param name="tipo">Tipo SQL del parámetro</param>
-        /// <param name="tamaño">Tamaño del parámetro (opcional)</param>
-        /// <returns>SqlParameter configurado</returns>
         public static SqlParameter CrearParametro(string nombre, object valor, SqlDbType tipo, int tamaño = 0)
         {
             SqlParameter parametro = new SqlParameter(nombre, tipo);
@@ -128,12 +99,6 @@ namespace CapaComun
             return parametro;
         }
 
-        /// <summary>
-        /// Convierte un DataRow a una entidad usando reflexión
-        /// </summary>
-        /// <typeparam name="T">Tipo de entidad</typeparam>
-        /// <param name="row">DataRow a convertir</param>
-        /// <returns>Entidad del tipo especificado</returns>
         public static T ConvertirDataRowAEntidad<T>(DataRow row) where T : new()
         {
             T entidad = new T();
@@ -165,12 +130,6 @@ namespace CapaComun
             return entidad;
         }
 
-        /// <summary>
-        /// Convierte un DataTable a una lista de entidades
-        /// </summary>
-        /// <typeparam name="T">Tipo de entidad</typeparam>
-        /// <param name="dataTable">DataTable a convertir</param>
-        /// <returns>Lista de entidades</returns>
         public static List<T> ConvertirDataTableALista<T>(DataTable dataTable) where T : new()
         {
             List<T> lista = new List<T>();
